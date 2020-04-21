@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<robot name="robocol_rov" xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+  <!-- Input debug flag -->
+  <xacro:arg name="debug" default="0"/>
+
+  <!-- Vehicle's namespace -->
+  <xacro:arg name="namespace" default="robocol_rov"/>
+
+  <!-- Include the ROV macro file -->
+  <xacro:include filename="$(find robocol_rov)/models/rov_version1/urdf/rov_base.xacro"/>
+
+  <!-- Create the rov_example -->
+  <xacro:robocol_rov namespace="$(arg namespace)" debug="$(arg debug)"/>
+
+  <!-- Joint state publisher plugin -->
+  <gazebo>
+    <plugin name="joint_state_publisher" filename="libjoint_state_publisher.so">
+      <robotNamespace>$(arg namespace)</robotNamespace>
+      <updateRate>50</updateRate>
+    </plugin>
+  </gazebo>
+
+</robot>
