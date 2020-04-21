@@ -135,7 +135,7 @@
         -->
         <conversion>
           <type>Basic</type>
-          <rotorConstant>0.0</rotorConstant>
+          <rotorConstant>2.32897225/100000</rotorConstant> <!-- este valor se saco con el archivo de CalculoCurvasMotores, a partir de los datos del 			motor que se pueden encontrar en las especificaciones tecnicas. Este valor depende del voltaje. El que esta ahorita es el de 12V-->
         </conversion>
 
         <!-- Dead-zone nonlinearity described in Bessa, 2006
@@ -148,10 +148,11 @@
         -->
         <conversion>
           <type>Bessa</type>
-          <rotorConstantL>0.0</rotorConstantL>
-          <rotorConstantR>0.0</rotorConstantR>
-          <deltaL>0.0</deltaL>
-          <deltaR>0.0</deltaR>
+          <rotorConstantL>2.0511165/100000</rotorConstantL>
+          <rotorConstantR>2.6085361/100000</rotorConstantR>
+          <deltaL>-40.0</deltaL>
+          <deltaR>36.0</deltaR> 
+	<!-- estos valores se sacaron con el archivo de CalculoCurvasMotores, a partir de los datos del motor que se pueden encontrar en las 		especificaciones tecnicas. Este valor depende del voltaje. El que esta ahorita es el de 12V-->
         </conversion>
 
         <!-- Linear interpolation
