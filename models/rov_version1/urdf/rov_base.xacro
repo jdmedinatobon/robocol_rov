@@ -11,10 +11,10 @@
     Vehicle's parameters
   -->
 
-  <xacro:property name="mass" value="18.87"/>
-  <xacro:property name="volume" value="1000"/>
+  <xacro:property name="mass" value="6.487"/> <!-- Kg, pero no se cual es la unidad apropiada -->
+  <xacro:property name="volume" value="0.0064867322"/> <!-- Esto lo puse en metros³ pero no se que unidades son las apropiadas.-->
   <!-- Center of gravity -->
-  <xacro:property name="cog" value="0 0 0"/>
+  <xacro:property name="cog" value="-0.283625 0.084356 0.202383"/> <!-- en metros, pero no se cual es la unidad apropiada--> 
   <!-- Center of buoyancy -->
   <xacro:property name="cob" value="0 0 0"/>
   <!-- Fluid density -->
@@ -41,9 +41,7 @@
       <inertial>
         <mass value="${mass}" />
         <origin xyz="${cog}" rpy="0 0 0"/>
-        <inertia ixx="525.39" ixy="1.44" ixz="33.41"
-                 iyy="794.20" iyz="2.6"
-                 izz="691.23" />
+        <inertia ixx="102.520767" ixy="17.18065" ixz="0.126629" iyy="189.944404" iyz="-0.373325" izz="173.529074"/>
       </inertial>
 
       <visual>
@@ -53,28 +51,29 @@
         </geometry>
       </visual>
 
-	<!-- Hacer un archivo con la collision bien y ponerlo en formato STL.-->
-      <!-- <collision>
+      <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="${collision_mesh_file}" scale="1 1 1" />
         </geometry>
-      </collision>-->
+      </collision>
 	
-	<!-- por ahora, le pondre una caja igual a la de rexrov2. Se podría poner una caja con las dimensiones del rov. -->
-      <!-- bottom plate -->
+	<!-- Las siguiente lineas son para meterle la collision directamente desde este archivo. Esto ya se hace con las lineas anteriores,
+	asi que lo dejare comentado.-->
+	<!--      
+	 bottom plate 
       <collision>
         <origin xyz="0 0 -0.75" rpy="0 0 0"/>
         <geometry>
           <box size="2.56 1.50 0.10"/>
         </geometry>
       </collision>
-      <!-- top plate -->
+       top plate 
       <collision>
         <origin xyz="0 0 0.60" rpy="0 0 0"/>
         <geometry><box size="2.56 1.50 0.40"/></geometry>
       </collision>
-      <!-- left / right sides -->
+       left / right sides 
       <collision>
         <origin xyz="-0.20 0.70 -0.15" rpy="0 0 0"/>
         <geometry><box size="2.20 0.10 1.10"/></geometry>
@@ -83,7 +82,7 @@
         <origin xyz="-0.20 -0.70 -0.15" rpy="0 0 0"/>
         <geometry><box size="2.20 0.10 1.10"/></geometry>
       </collision>
-
+	-->
     </link>
 
   <gazebo reference="${namespace}/base_link">
