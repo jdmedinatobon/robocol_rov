@@ -59,7 +59,7 @@
         <gain>1</gain>
 
         <!-- Maximum allowed input value for the input signal for thruster unit -->
-        <clampMax>0</clampMax>
+        <clampMax>0</clampMax> <!-- Mirar las restricciones del motor -->
 
         <!-- Minimum allowed value for the input signal for thruster unit -->
         <clampMin>0</clampMin>
