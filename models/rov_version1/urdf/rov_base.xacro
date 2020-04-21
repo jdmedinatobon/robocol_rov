@@ -14,13 +14,13 @@
   <xacro:property name="mass" value="6.487"/> <!-- Kg, pero no se cual es la unidad apropiada -->
   <xacro:property name="volume" value="0.0064867322"/> <!-- Esto lo puse en metros³ pero no se que unidades son las apropiadas.-->
   <!-- Center of gravity -->
-  <xacro:property name="cog" value="-0.283625 0.084356 0.202383"/> <!-- en metros, pero no se cual es la unidad apropiada--> 
+  <xacro:property name="cog" value="-0.283625 0.084356 0.202383"/> <!-- En metros, pero no se cual es la unidad apropiada. Depronto mal, chequear que la orientacion sea la misma.--> 
   <!-- Center of buoyancy -->
   <xacro:property name="cob" value="0 0 0"/>
   <!-- Fluid density -->
-  <xacro:property name="rho" value="1028"/>
+  <xacro:property name="rho" value="1028"/> <!-- Asegurarnos que sea el del agua -->
 
-  <!-- Describing the dimensions of the vehicle's bounding box -->
+  <!-- Describing the dimensions of the vehicle's bounding box. Está mal por ahora le puse cualquier cosa, incluirle las dimensiones correctas del submarino. -->
   <xacro:property name="length" value="10"/>
   <xacro:property name="width"  value="10"/>
   <xacro:property name="height" value="10"/>
@@ -41,7 +41,7 @@
       <inertial>
         <mass value="${mass}" />
         <origin xyz="${cog}" rpy="0 0 0"/>
-        <inertia ixx="102.520767" ixy="17.18065" ixz="0.126629" iyy="189.944404" iyz="-0.373325" izz="173.529074"/>
+        <inertia ixx="0.102520767" ixy="0.01718065" ixz="0.000126629" iyy="0.189944404" iyz="-0.000373325" izz="0.173529074"/> <!--En Kg m²-->
       </inertial>
 
       <visual>
