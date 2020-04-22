@@ -48,6 +48,8 @@
 
         <!-- Name of the joint between thruster and vehicle base link -->
         <jointName>${robot_namespace}/thruster_${thruster_id}_joint</jointName>
+	
+	<thrusterID>${thruster_id}</thrusterID>
 
         <!-- Thruster force output topic name -->
         <thrustTopic>${robot_namespace}/thrusters/${thruster_id}/thrust</thrustTopic>
@@ -59,10 +61,10 @@
         <gain>1</gain>
 
         <!-- Maximum allowed input value for the input signal for thruster unit -->
-        <clampMax>0</clampMax> <!-- Mirar las restricciones del motor -->
+        <clampMax>2000</clampMax> <!-- Mirar las restricciones del motor -->
 
         <!-- Minimum allowed value for the input signal for thruster unit -->
-        <clampMin>0</clampMin>
+        <clampMin>1000</clampMin>
 
         <!--
         Value from 0 to 1 to set the efficiency of the output thrust force

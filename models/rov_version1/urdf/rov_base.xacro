@@ -102,8 +102,8 @@
   </joint>
 
     <!-- Set up hydrodynamic plugin -->
-    <gazebo>
-      <plugin name="${namespace}_uuv_plugin" filename="libunderwater_object_ros_plugin.so">
+    <gazebo><!--  -->
+      <plugin name="${namespace}_uuv_plugin" filename="libuuv_underwater_object_ros_plugin.so">
         <!-- Fluid density to be used in the computation of buoyancy forces
         for all links specified below -->
         <fluid_density>${rho}</fluid_density>
@@ -147,19 +147,19 @@
           <hydrodynamic_model>
             <type>fossen</type>
             <added_mass>
-              0 0 0 0 0 0
-              0 0 0 0 0 0
-              0 0 0 0 0 0
-              0 0 0 0 0 0
-              0 0 0 0 0 0
-              0 0 0 0 0 0
+                     779.79 -6.8773 -103.32  8.5426 -165.54 -7.8033
+                    -6.8773    1222   51.29  409.44 -5.8488  62.726
+                    -103.32   51.29  3659.9  6.1112 -386.42  10.774
+                     8.5426  409.44  6.1112   534.9 -10.027  21.019
+                    -165.54 -5.8488 -386.42 -10.027  842.69 -1.1162
+                    -7.8033  62.726  10.775  21.019 -1.1162  224.32
             </added_mass>
             <!--
             The linear damping coefficients can be provided as a diagonal (6 elements)
             or a full matrix (36 coefficients), like the added-mass coefficients above
             -->
             <linear_damping>
-              0 0 0 0 0 0
+              -74.82 -69.48 -728.4 -268.8 -309.77 -105
             </linear_damping>
             <!--
             The linear damping coefficients proportional to the forward speed
@@ -168,14 +168,15 @@
             This matrix is mostly useful for slender bodies (e.g. AUVs with torpedo shape)
             -->
             <linear_damping_forward_speed>
-              0 0 0 0 0 0
+		0 0 0 0 0 0
+              <!---74.82 -69.48 -728.4 -268.8 -309.77 -105 -->
             </linear_damping_forward_speed>
             <!--
             The quadratic damping coefficients can be provided as a diagonal (6 elements)
             or a full matrix (36 coefficients), like the added-mass coefficients above
             -->
             <quadratic_damping>
-              0 0 0 0 0 0
+              -748.22 -992.53 -1821.01 -672 -774.44 -523.27
             </quadratic_damping>
           </hydrodynamic_model>
 
