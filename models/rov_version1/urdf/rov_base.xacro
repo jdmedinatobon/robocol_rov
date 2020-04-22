@@ -11,19 +11,19 @@
     Vehicle's parameters
   -->
 
-  <xacro:property name="mass" value="6.487"/> <!-- Kg, pero no se cual es la unidad apropiada -->
+  <xacro:property name="mass" value="600.487"/> <!-- Kg, pero no se cual es la unidad apropiada -->
   <xacro:property name="volume" value="0.0064867322"/> <!-- Esto lo puse en metros³ pero no se que unidades son las apropiadas.-->
   <!-- Center of gravity -->
   <xacro:property name="cog" value="-0.283625 0.084356 0.202383"/> <!-- En metros, pero no se cual es la unidad apropiada. Depronto mal, chequear que la orientacion sea la misma.--> 
   <!-- Center of buoyancy -->
   <xacro:property name="cob" value="0 0 0"/>
   <!-- Fluid density -->
-  <xacro:property name="rho" value="1028"/> <!-- Asegurarnos que sea el del agua -->
+  <xacro:property name="rho" value="1028.0"/> <!-- Asegurarnos que sea el del agua -->
 
   <!-- Describing the dimensions of the vehicle's bounding box. Está mal por ahora le puse cualquier cosa, incluirle las dimensiones correctas del submarino. -->
-  <xacro:property name="length" value="10"/>
-  <xacro:property name="width"  value="10"/>
-  <xacro:property name="height" value="10"/>
+  <xacro:property name="length" value="1"/>
+  <xacro:property name="width"  value="1"/>
+  <xacro:property name="height" value="1"/>
 
   <!-- Visual mesh file for the vehicle, usually in DAE (Collada) format -->
   <xacro:property name="visual_mesh_file" value="file://$(find robocol_rov)/models/rov_version1/mesh/robocol_rov_chasis.dae"/>
@@ -41,7 +41,7 @@
       <inertial>
         <mass value="${mass}" />
         <origin xyz="${cog}" rpy="0 0 0"/>
-        <inertia ixx="0.102520767" ixy="0.01718065" ixz="0.000126629" iyy="0.189944404" iyz="-0.000373325" izz="0.173529074"/> <!--En Kg m²-->
+        <inertia ixx="0.102520767" ixy="0.01718065" ixz="0.000126629" iyy="0.189944404" iyz="0.000373325" izz="0.173529074"/> <!--En Kg m²-->
       </inertial>
 
       <visual>
@@ -147,12 +147,12 @@
           <hydrodynamic_model>
             <type>fossen</type>
             <added_mass>
-                     779.79 -6.8773 -103.32  8.5426 -165.54 -7.8033
-                    -6.8773    1222   51.29  409.44 -5.8488  62.726
-                    -103.32   51.29  3659.9  6.1112 -386.42  10.774
-                     8.5426  409.44  6.1112   534.9 -10.027  21.019
-                    -165.54 -5.8488 -386.42 -10.027  842.69 -1.1162
-                    -7.8033  62.726  10.775  21.019 -1.1162  224.32
+                     0.77979 -0.0068773 -0.10332  0.0085426 -0.16554 -0.0078033
+                    -0.0068773    1.222   0.5129  0.40944 -0.0058488  0.062726
+                    -0.10332   0.05129  3.6599  0.0061112 -0.38642  0.010774
+                     0.0085426  0.40944  0.0061112   0.5349 -0.010027  0.021019
+                    -0.16554 -0.0058488 -0.38642 -0.010027  0.84269 -0.0011162
+                    -0.0078033  0.062726  0.010775  0.021019 -0.011162  0.22432
             </added_mass>
             <!--
             The linear damping coefficients can be provided as a diagonal (6 elements)
@@ -167,14 +167,16 @@
             like the added-mass coefficients above.
             This matrix is mostly useful for slender bodies (e.g. AUVs with torpedo shape)
             -->
+	    <!-- 
             <linear_damping_forward_speed>
 		0 0 0 0 0 0
-              <!---74.82 -69.48 -728.4 -268.8 -309.77 -105 -->
+              -74.82 -69.48 -728.4 -268.8 -309.77 -105
             </linear_damping_forward_speed>
-            <!--
+            
             The quadratic damping coefficients can be provided as a diagonal (6 elements)
             or a full matrix (36 coefficients), like the added-mass coefficients above
-            -->
+            
+	    -->
             <quadratic_damping>
               -748.22 -992.53 -1821.01 -672 -774.44 -523.27
             </quadratic_damping>
