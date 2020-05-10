@@ -27,7 +27,7 @@ class imu1_node:
         self.done = False
         rospy.Subscriber('/gazebo/model_states', ModelStates, self.model_states_callback)
        	rospy.Subscriber('/'+ self.namespace +'/imu', Imu, self.imu_callback)
-       	imu_pos = rospy.Publisher('/imu1/pos', Pose, queue_size=10)
+       	imu_pos = rospy.Publisher('/'+ self.namespace+ '/pos', Pose, queue_size=10)
        	rate = rospy.Rate(50)
        	while not rospy.is_shutdown():
        		if self.done: 
@@ -50,7 +50,7 @@ class imu1_node:
 	    	self.imu_x = self.imu_x + self.imu_vx/50.0 + (1/50.0)*(msg.linear_acceleration.x+0.0021)*(1/50.0)**2
 	        self.imu_y = self.imu_y + self.imu_vy/50.0 + (1/50.0)*(msg.linear_acceleration.y+0.0076)*(1/50.0)**2
 	        self.imu_z = self.imu_z + self.imu_vz/50.0 + (1/50.0)*(msg.linear_acceleration.z-9.8)*(1/50.0)**2
-	        print(msg.linear_acceleration.x)
+	        #print(msg.linear_acceleration.x)
 	        self.done = True
         pass
 
