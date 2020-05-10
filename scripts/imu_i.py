@@ -44,12 +44,12 @@ class imu1_node:
 
     def imu_callback(self, msg):
     	if self.first == False:
-	    	self.imu_vx = self.imu_vx + (msg.linear_acceleration.x+0.0021)*(1/50.0)
-	        self.imu_vy = self.imu_vy + (msg.linear_acceleration.y+0.0076)*(1/50.0)
+	    	self.imu_vx = self.imu_vx + (msg.linear_acceleration.x)*(1/50.0)
+	        self.imu_vy = self.imu_vy + (msg.linear_acceleration.y)*(1/50.0)
 	        self.imu_vz = self.imu_vz + (msg.linear_acceleration.z-9.8)*(1/50.0)
-	    	self.imu_x = self.imu_x + self.imu_vx/50.0 + (1/50.0)*(msg.linear_acceleration.x+0.0021)*(1/50.0)**2
-	        self.imu_y = self.imu_y + self.imu_vy/50.0 + (1/50.0)*(msg.linear_acceleration.y+0.0076)*(1/50.0)**2
-	        self.imu_z = self.imu_z + self.imu_vz/50.0 + (1/50.0)*(msg.linear_acceleration.z-9.8)*(1/50.0)**2
+	    	self.imu_x = self.imu_x + self.imu_vx/50.0 + (1/2.0)(msg.linear_acceleration.x)*(1/50.0)**2
+	        self.imu_y = self.imu_y + self.imu_vy/50.0 + (1/2.0)*(msg.linear_acceleration.y)*(1/50.0)**2
+	        self.imu_z = self.imu_z + self.imu_vz/50.0 + (1/2.0)*(msg.linear_acceleration.z-9.8)*(1/50.0)**2
 	        #print(msg.linear_acceleration.x)
 	        self.done = True
         pass
