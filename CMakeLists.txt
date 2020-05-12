@@ -34,7 +34,12 @@ find_package(catkin REQUIRED)
 ##     * add a exec_depend tag for "message_runtime"
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
-##     find_package(catkin REQUIRED COMPONENTS ...)
+find_package(catkin REQUIRED COMPONENTS
+   rospy
+   roscpp
+   std_msgs
+   message_generation
+)
 ##   * add "message_runtime" and every package in MSG_DEP_SET to
 ##     catkin_package(CATKIN_DEPENDS ...)
 ##   * uncomment the add_*_files sections below as needed
@@ -43,11 +48,10 @@ find_package(catkin REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+   FILES
+   ImuInfo.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -64,10 +68,10 @@ find_package(catkin REQUIRED)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -103,6 +107,7 @@ catkin_package(
 #  LIBRARIES robocol_rov
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
+CATKIN_DEPENDS message_runtime
 )
 
 ###########
