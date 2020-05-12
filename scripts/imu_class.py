@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import numpy as np
 import rospy
-from from geometry_msgs.msg import Pose
-import classes
+from geometry_msgs.msg import Pose
+from classes import State
 
 class IMU:
     def __init__(self, vecinos):
@@ -34,7 +34,7 @@ class IMU:
         self.num_neighbors = len(vecinos)
 
         #Por ahora lo de ver cuando estan actualizados chambon con otro diccionario
-        self.is_neighbor_info_new {v : 0 for v in vecinos}
+        self.is_neighbor_info_new = {v : 0 for v in vecinos}
 
     def dar_pose(self):
         pose = Pose()
@@ -50,9 +50,9 @@ class IMU:
         return pose
 
     def iniciar(self, pose):
-		self.state.x = pose.pose[1].position.x
-    	self.state.y = pose.pose[1].position.y
-    	self.state.z = pose.pose[1].position.z
+        self.state.x = pose.pose[1].position.x
+        self.state.y = pose.pose[1].position.y
+        self.state.z = pose.pose[1].position.z
 
     def actualizar(self, acel, sample_time):
     	self.state.x = self.state.x + sample_time*self.state.vx + (((sample_time)**2)/2.0)*(acel.linear_acceleration.x-self.bias_x)

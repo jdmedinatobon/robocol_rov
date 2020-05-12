@@ -12,7 +12,7 @@ from sensor_msgs.msg import Imu
 from gazebo_msgs.msg import ModelStates
 
 from robocol_rov.msg import ImuInfo
-import imu_class
+from imu_class import IMU
 
 class imu_node:
     def __init__(self, namespace, vecinos):
@@ -39,10 +39,8 @@ class imu_node:
 
         while not rospy.is_shutdown():
        		if self.done:
-
-                pose_imu = self.imu.dar_pose()
-       			imu_pos.publish(pose_imu)
-
+                 pose_imu = self.imu.dar_pose()
+                 imu_pos.publish(pose_imu)
        		rate.sleep()
 
     def imu_callback(self, msg):
@@ -59,7 +57,7 @@ class imu_node:
 
         #Recordar que j se refiere a las iteraciones del problema de optimizacion
         j = 0
-        while j < max_iter:
+        while j < self.max_iter:
 
 
             j += 1
@@ -67,7 +65,7 @@ class imu_node:
     def model_states_callback(self, msg):
     	if self.first:
             self.imu.iniciar(msg)
-        	self.first = False
+            self.first = False
 
         self.x_gazebo = msg.pose[1].position.x
     	self.y_gazebo = msg.pose[1].position.y
@@ -77,7 +75,7 @@ class imu_node:
         self.imu.calcular_info(info)
 
     def publish_info(self):
-        new_info = imu.calcular_info()
+        new_info = self.imu.calcular_info()
 
         #FIXME: Este if depronto molesta
         if new_info != -1:
@@ -86,10 +84,10 @@ class imu_node:
 if __name__ == '__main__':
     try:
     	if len(sys.argv) < 3:
-            print("Se necesitan por lo menos 2 parametros para que funcione. Ej: imu1 ["imu2"]")
+            print("Se necesitan por lo menos 2 parametros para que funcione. Ej: [imu1 imu2]")
         else:
-        	rospy.init_node(sys.argv[1] + '_node', anonymous=True) #Se inicia el nodo
-        node = imu_node(sys.argv[1], sys.argv[2])
+            rospy.init_node(sys.argv[1] + '_node', anonymous=True) #Se inicia el nodo
+        node = imu_node(sys.argv[1], [sys.argv[2], sys.argv[3]])
         rospy.spin()
     except rospy.ROSInterruptException:
 
