@@ -41,7 +41,6 @@ class LinkNode:
     def sensor_info_callback(self, msg):
     	if self.first == False:
 	    	self.imu.actualizar(msg, 1/50.0)
-	        #print(msg.linear_acceleration.x)
 	        self.done = True
 
     def publish_info(self):
