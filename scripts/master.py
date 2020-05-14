@@ -18,7 +18,7 @@ enlaces_imu3 = "link1"
 sensores_link1 = "imu1 imu3"
 sensores_link2 = "imu1 imu2"
 
-#Por ahora chambon con rosrun
+#Por ahora chambon con rosrun. Esto no funciona.
 os.system("rosrun robocol_rov imu_node.py " + "imu1 " + enlaces_imu1)
 os.system("rosrun robocol_rov imu_node.py " + "imu2 " + enlaces_imu2)
 os.system("rosrun robocol_rov imu_node.py " + "imu3 " + enlaces_imu3)

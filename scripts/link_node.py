@@ -30,7 +30,7 @@ class LinkNode:
         rate = rospy.Rate(50)
 
         for s in sensores:
-            rospy.Subscriber('/' + s + 'info', ImuInfo, self.sensor_info_callback)
+            rospy.Subscriber('/' + s + '/info', ImuInfo, self.sensor_info_callback)
 
         while not rospy.is_shutdown():
        		if self.done:
@@ -70,7 +70,13 @@ if __name__ == '__main__':
             print("Se necesitan por lo menos 2 parametros para que funcione. Ej: [imu1 imu2]")
         else:
             rospy.init_node(sys.argv[1] + '_node', anonymous=True) #Se inicia el nodo
-        node = imu_node(sys.argv[1], [sys.argv[2], sys.argv[3]])
+
+        lista_sensores = []
+        i = 2
+        while i < len(sys.argv):
+            lista_sensores.append(sys.argv[i])
+            i+=1
+        node = LinkNode(sys.argv[1], lista_sensores)
         rospy.spin()
     except rospy.ROSInterruptException:
 

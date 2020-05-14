@@ -4,7 +4,7 @@ import rospy
 from geometry_msgs.msg import Pose
 from classes import State
 
-class Imu:
+class IMU:
     def __init__(self, enlaces):
         self.state = State()
         self.estimated_state = State()
@@ -30,7 +30,7 @@ class Imu:
         self.grad = 0
         self.hessian = 0
 
-        self.link_info = {v : 0 for e in enlaces}
+        self.link_info = {e : 0 for e in enlaces}
         self.num_links = len(enlaces)
 
         #Por ahora lo de ver cuando estan actualizados chambon con otro diccionario

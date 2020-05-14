@@ -13,22 +13,22 @@ from gazebo_msgs.msg import ModelStates
 
 from robocol_rov.msg import ImuInfo
 from robocol_rov.msg import LinkInfo
-from imu_class import Imu
+from imu_class import IMU
 
 class ImuNode:
     def __init__(self, namespace, enlaces):
     	self.namespace = namespace
     	print(self.namespace + '_node: initializing node')
 
-    	self.imu = Imu(enlaces)
+    	self.imu = IMU(enlaces)
         self.info = ImuInfo()
         self.max_iter = 100
 
         self.first = True
         self.done = False
 
-        rospy.Subscriber('/gazebo/model_states', ModelStates, self.model_states_callback)
-       	rospy.Subscriber('/'+ self.namespace +'/imu', Imu, self.imu_callback)
+        # rospy.Subscriber('/gazebo/model_states', ModelStates, self.model_states_callback)
+       	# rospy.Subscriber('/' + self.namespace +'/acel', Imu, self.imu_callback)
 
         imu_pos = rospy.Publisher('/' + self.namespace + '/pos', Pose, queue_size=10)
         imu_info = rospy.Publisher('/' + self.namespace + '/info', ImuInfo, queue_size = 10)
@@ -39,9 +39,9 @@ class ImuNode:
             rospy.Subscriber('/' + e + '/info', LinkInfo, self.link_info_callback)
 
         while not rospy.is_shutdown():
-       		if self.done:
-                 pose_imu = self.imu.dar_pose()
-                 imu_pos.publish(pose_imu)
+       		# if self.done:
+            #      pose_imu = self.imu.dar_pose()
+            #      imu_pos.publish(pose_imu)
        		rate.sleep()
 
     def imu_callback(self, msg):
@@ -88,7 +88,14 @@ if __name__ == '__main__':
             print("Se necesitan por lo menos 2 parametros para que funcione. Ej: [imu1 imu2]")
         else:
             rospy.init_node(sys.argv[1] + '_node', anonymous=True) #Se inicia el nodo
-        node = imu_node(sys.argv[1], [sys.argv[2], sys.argv[3]])
+
+        lista_enlaces = []
+        i = 2
+        while i < len(sys.argv):
+            lista_enlaces.append(sys.argv[i])
+            i+=1
+        #sys.argv[1]
+        node = ImuNode(sys.argv[1], lista_enlaces)
         rospy.spin()
     except rospy.ROSInterruptException:
 
