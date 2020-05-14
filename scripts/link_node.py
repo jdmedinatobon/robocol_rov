@@ -44,19 +44,6 @@ class LinkNode:
 	        #print(msg.linear_acceleration.x)
 	        self.done = True
 
-        #TODO: Terminar esto. No estoy seguro aun como organizarlos para que todo
-        #este bien sincronizado.
-        #Aqui se debe indicar que se comience a solucionar el problema de manera distribuida.
-        #Por ahora chambon con un while ahi con un numero maximo de iteraciones, pero
-        #debe haber una mejor forma de hacerlo.
-
-        #Recordar que j se refiere a las iteraciones del problema de optimizacion
-        j = 0
-        while j < self.max_iter:
-
-
-            j += 1
-
     def publish_info(self):
         new_info = self.link.actualizar()
 
