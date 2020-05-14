@@ -8,19 +8,17 @@ import sys, unittest
 import os, os.path, time
 import rospy
 from geometry_msgs.msg import Pose, Quaternion, Point, PoseStamped, PoseWithCovariance, TwistWithCovariance, Twist, Vector3, Wrench
-from sensor_msgs.msg import Imu
-from gazebo_msgs.msg import ModelStates
 
-from robocol_rov.msg import ImuInfo
-from imu_class import IMU
+from robocol_rov.msg import LinkInfo
+from link_class import Link
 
-class ImuNode:
-    def __init__(self, namespace, vecinos):
+class LinkNode:
+    def __init__(self, namespace, sensores):
     	self.namespace = namespace
     	print(self.namespace + '_node: initializing node')
 
-    	self.imu = IMU(vecinos)
-        self.info = ImuInfo()
+    	self.link = Link(sensores)
+        self.info = LinkInfo()
         self.max_iter = 100
 
         self.first = True
