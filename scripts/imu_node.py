@@ -12,14 +12,15 @@ from sensor_msgs.msg import Imu
 from gazebo_msgs.msg import ModelStates
 
 from robocol_rov.msg import ImuInfo
-from imu_class import IMU
+from robocol_rov.msg import LinkInfo
+from imu_class import Imu
 
 class ImuNode:
-    def __init__(self, namespace, vecinos):
+    def __init__(self, namespace, enlaces):
     	self.namespace = namespace
     	print(self.namespace + '_node: initializing node')
 
-    	self.imu = IMU(vecinos)
+    	self.imu = Imu(enlaces)
         self.info = ImuInfo()
         self.max_iter = 100
 
@@ -34,8 +35,8 @@ class ImuNode:
 
         rate = rospy.Rate(50)
 
-        for v in vecinos:
-            rospy.Subscriber('/' + v + 'info', ImuInfo, self.neighbor_info_callback)
+        for e in enlaces:
+            rospy.Subscriber('/' + e + '/info', LinkInfo, self.link_info_callback)
 
         while not rospy.is_shutdown():
        		if self.done:
@@ -71,7 +72,7 @@ class ImuNode:
     	self.y_gazebo = msg.pose[1].position.y
     	self.z_gazebo = msg.pose[1].position.z
 
-    def neighbor_info_callback(self, info):
+    def link_info_callback(self, info):
         self.imu.calcular_info(info)
 
     def publish_info(self):

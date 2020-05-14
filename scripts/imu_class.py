@@ -4,8 +4,8 @@ import rospy
 from geometry_msgs.msg import Pose
 from classes import State
 
-class IMU:
-    def __init__(self, vecinos):
+class Imu:
+    def __init__(self, enlaces):
         self.state = State()
         self.estimated_state = State()
 
@@ -30,11 +30,11 @@ class IMU:
         self.grad = 0
         self.hessian = 0
 
-        self.neighbor_info = {v : np.zeros(2) for v in vecinos}
-        self.num_neighbors = len(vecinos)
+        self.link_info = {v : 0 for e in enlaces}
+        self.num_links = len(enlaces)
 
         #Por ahora lo de ver cuando estan actualizados chambon con otro diccionario
-        self.is_neighbor_info_new = {v : 0 for v in vecinos}
+        self.is_link_info_new = {e : 0 for e in enlaces}
 
     def dar_pose(self):
         pose = Pose()
@@ -81,11 +81,11 @@ class IMU:
         #por ahora feo con un while ahi
         self.guardar_info(info)
 
-        if sum(self.is_neighbor_info_new.values) == self.num_neighbors:
+        if sum(self.is_link_info_new.values) == self.num_links:
             #TODO: Terminar esto. Hay que calcular los nuevos grad y hessian.
             #Calcular los nuevos grad y hessian y retornarlos para publicar
             #Tambien se indica que los valores de grad y hessian son viejos
-            self.is_neighbor_info_new = dict.fromkeys(self.is_neighbor_info_new, 0)
+            self.is_link_info_new = dict.fromkeys(self.is_link_info_new, 0)
 
             return self.grad, self.hessian
         else:
@@ -94,5 +94,5 @@ class IMU:
             return -1
 
     def guardar_info(self, info):
-        self.neighbor_info[info.id] = np.array([info.grad, info.hessian])
-        self.is_neighbor_info_new[info.id] = 1
+        self.link_info[info.id] = info.price
+        self.is_link_info_new[info.id] = 1
