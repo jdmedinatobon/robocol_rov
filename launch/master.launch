@@ -1,18 +1,18 @@
 <launch>
 
-  <node pkg="robocol_rov" name="imu1" type="imu_node.py" args="imu1 link1 link2">
+  <node name="imu1" pkg="robocol_rov" type="imu_node.py" args="imu1 link1 link2">
   </node>
 
-  <node pkg="robocol_rov" name="imu2" type="imu_node.py" args="imu2 link2">
+  <node name="imu2" pkg="robocol_rov" type="imu_node.py" args="imu2 link2">
   </node>
 
-  <node pkg="robocol_rov" name="imu3" type="imu_node.py" args="imu3 link1">
+  <node name="imu3" pkg="robocol_rov" type="imu_node.py" args="imu3 link1">
   </node>
 
-  <node pkg="robocol_rov" name="link1" type="link_node.py" args="link1 imu1 imu3">
+  <node name="link1" pkg="robocol_rov" type="link_node.py" args="link1 imu1 imu3">
   </node>
 
-  <node pkg="robocol_rov" name="link2" type="link_node.py" args="link2 imu1 imu2">
+  <node name="link2" pkg="robocol_rov" type="link_node.py" args="link2 imu1 imu2">
   </node>
 
 </launch>
