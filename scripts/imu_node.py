@@ -27,11 +27,11 @@ class ImuNode:
         self.info.id = namespace
 
         self.price_counter = 0
-        self.price_max_iter = 10
+        self.price_max_iter = 100
 
         #Este counter no hace falta creo.
         #self.consensus_counter = 0
-        self.consensus_max_iter = 10
+        self.consensus_max_iter = 100
 
         self.first = True
         self.done = False
@@ -66,13 +66,15 @@ class ImuNode:
 	        #print(msg.linear_acceleration.x)
 	        self.done = True
 
+
         #TODO: Terminar esto. No estoy seguro aun como organizarlos para que todo
         #este bien sincronizado. Creo que voy a usar Threads.
         #Aqui se debe indicar que se comience a solucionar el problema de manera distribuida.
         #Por ahora chambon con un while ahi con un numero maximo de iteraciones, pero
         #debe haber una mejor forma de hacerlo.
         #self.flag_consensus.clear()
-        print("imu_callback llamado")
+        print("imu_callback llamado. Tiempo entre llamados: {} segundos".format(time.time()-self.time))
+        self.time = time.time()
         self.calcular_consensus()
 
         #No creo que esta flag se necesite
@@ -91,7 +93,7 @@ class ImuNode:
 
     def link_info_callback(self, info):
         #print("Callback de enlace llamado. Info: {}, Tiempo entre llamados :{}".format(info, time.time()-self.time))
-        t1 = time.time()
+
         if self.price_counter < self.price_max_iter:
             self.info.grad, self.info.hessian = self.imu.calcular_info(info)
             self.price_counter += 1
@@ -101,23 +103,14 @@ class ImuNode:
             self.imu_info.publish(self.info)
             self.flag_price.set()
             self.price_counter = 0
-        print("Tiempo ifs: {}".format(time.time()-t1))
-        self.time = time.time()
-
-        # print("En sensor: {}".format(time.time()))
-        # print("En link: {}".format(info.price))
-        print("Tiempo llamada: {}".format(time.time()-info.price))
+        #self.time = time.time()
 
     def initialize_sensors(self):
 
         self.info.grad = self.imu.calcular_grad()
         self.info.hessian = self.imu.calcular_hessian()
         self.info.done = False
-        print("Iniciando sensores: Info: {}".format(self.info))
-
         self.imu_info.publish(self.info)
-
-        print("Publicando la primera vez")
 
     def calcular_consensus(self):
         #Aqui se inicia a resolver el problema de optimizacion
@@ -129,14 +122,14 @@ class ImuNode:
             #Paso 1: Esperar a que w (price) este calculado.
             #Usar un Event creo que funciona bastante bien.
             #Esto toca hacerlo en cada iteracion del problema de optimizacion
-            print("Iniciando")
+
             self.initialize_sensors()
             self.flag_price.clear()
             self.flag_price.wait(timeout = 1/50.0)
 
             self.imu.estimated_state.x += 1
             delta = time.time()-tiempo
-            print("j = {}. Tiempo Iteracion: {} segundos".format(j, delta))
+            print("j = {}. Tiempo Iteracion: {} milisegundos".format(j, delta*1000))
             j += 1
 
         pose_imu = self.imu.dar_pose()
