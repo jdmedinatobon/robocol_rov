@@ -15,20 +15,20 @@ from link_class import Link
 
 class LinkNode:
     def __init__(self, namespace, sensores):
-    	self.namespace = namespace
-    	print(self.namespace + '_node: initializing node')
 
     	self.link = Link(sensores)
         self.info = LinkInfo()
-        self.max_iter = 100
+        self.info.id = namespace
+
+        print(self.info.id + '_node: initializing node')
 
         self.first = True
         self.done = False
 
-        link_info = rospy.Publisher('/' + self.namespace + '/info', LinkInfo, queue_size = 10)
+        self.link_info = rospy.Publisher('/' + self.info.id + '/info', LinkInfo, queue_size = 10)
 
         rate = rospy.Rate(50)
-
+        print("Sensores: {}".format(sensores))
         for s in sensores:
             rospy.Subscriber('/' + s + '/info', ImuInfo, self.sensor_info_callback)
 
@@ -39,16 +39,20 @@ class LinkNode:
        		rate.sleep()
 
     def sensor_info_callback(self, msg):
-    	if self.first == False:
-	    	self.imu.actualizar(msg, 1/50.0)
-	        self.done = True
+        print("Se llamo callback en link.")
+        print(msg)
+    	if self.first:
+            self.initialize_link()
+            self.first = False
+        elif msg.done:
+            self.first = True
+        else:
+            self.info = self.link.calcular_info()
+            self.link_info.publish(self.info)
 
-    def publish_info(self):
-        new_info = self.link.actualizar()
-
-        #FIXME: Este if depronto molesta
-        if new_info != -1:
-            link_info.publish()
+    def initialize_link(self):
+        self.info.price = self.link.reiniciar()
+        self.link_info.publish(self.info)
 
 if __name__ == '__main__':
     try:
@@ -63,6 +67,7 @@ if __name__ == '__main__':
         while i < len(args):
             lista_sensores.append(args[i])
             i+=1
+        print("Creando enlace")
         node = LinkNode(args[1], lista_sensores)
         rospy.spin()
     except rospy.ROSInterruptException:

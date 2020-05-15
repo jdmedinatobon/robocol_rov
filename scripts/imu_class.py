@@ -4,6 +4,7 @@ import rospy
 from geometry_msgs.msg import Pose
 from classes import State
 from pyquaternion import Quaternion
+from threading import Event
 
 class IMU:
     def __init__(self, enlaces):
@@ -37,6 +38,8 @@ class IMU:
         #Por ahora lo de ver cuando estan actualizados chambon con otro diccionario
         self.is_link_info_new = {e : 0 for e in enlaces}
 
+        self.flag_price = Event()
+
     def dar_pose(self):
         pose = Pose()
 
@@ -58,7 +61,7 @@ class IMU:
     def actualizar(self, acel, sample_time):
         quaternion= Quaternion(acel.orientation.x,acel.orientation.y,acel.orientation.z,acel.orientation.w)
         aceler= quaternion.rotate(np.array([acel.linear_acceleration.x, acel.linear_acceleration.y, acel.linear_acceleration.z-self.bias_z]))
-        print(aceler)
+        #print(aceler)
     	self.state.x = self.state.x + sample_time*self.state.vx + (((sample_time)**2)/2.0)*(aceler[0]-self.bias_x)
         self.state.y = self.state.y + sample_time*self.state.vy + (((sample_time)**2)/2.0)*(aceler[1]-self.bias_y)
         self.state.z = self.state.z + sample_time*self.state.vz + (((sample_time)**2)/2.0)*(aceler[2])
@@ -76,7 +79,7 @@ class IMU:
 
         return self.hessian
 
-    def calcular_info(self):
+    def calcular_info(self, info):
         #Aqui primero se espera a que se tengan las nuevas medidas del gradiente
         #Cuando se tengan, se calculan los nuevos grad y hessian y se retornan para
         #ser publicados por el nodo.
@@ -85,7 +88,7 @@ class IMU:
         #por ahora feo con un while ahi
         self.guardar_info(info)
 
-        if sum(self.is_link_info_new.values) == self.num_links:
+        if np.sum(self.is_link_info_new.values) == self.num_links:
             #TODO: Terminar esto. Hay que calcular los nuevos grad y hessian.
             #Calcular los nuevos grad y hessian y retornarlos para publicar
             #Tambien se indica que los valores de grad y hessian son viejos

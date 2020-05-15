@@ -7,7 +7,7 @@ from gazebo_msgs.msg import ModelStates
 import mpl_toolkits.mplot3d.axes3d as p3
 from geometry_msgs.msg import Pose
 
-class graficardor():
+class graficador():
     def __init__(self,):
         global axs, flag_1, flag_2, flag_3
         self.fig = plt.figure()
@@ -22,7 +22,7 @@ class graficardor():
         rospy.Subscriber('/imu3/pos', Pose, self.imu_3)
         self.ani = animation.FuncAnimation(self.fig, self.animate)
         plt.show()
-    
+
     def model_states_callback(self, msg):
         global x_gazebo, y_gazebo, z_gazebo
         x_gazebo = msg.pose[1].position.x
@@ -66,6 +66,6 @@ class graficardor():
 
 if __name__ == '__main__':
     try:
-        graficardor()
+        graficador()
     except rospy.ROSInterruptException:
         pass
