@@ -2,7 +2,7 @@
 import rospy
 import sys
 
-import math
+import math, time
 
 import sys, unittest
 import os, os.path, time
@@ -37,15 +37,13 @@ class LinkNode:
        		rate.sleep()
 
     def sensor_info_callback(self, msg):
-        print("Se llamo callback en link sensor.")
-        print(msg)
     	if self.first:
             self.initialize_link()
             self.first = False
         elif msg.done:
             self.first = True
         else:
-            self.info.price = self.link.calcular_info()
+            self.info.price = time.time()#self.link.calcular_info()
             self.link_info.publish(self.info)
 
     def initialize_link(self):

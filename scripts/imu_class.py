@@ -38,8 +38,6 @@ class IMU:
         #Por ahora lo de ver cuando estan actualizados chambon con otro diccionario
         self.is_link_info_new = {e : 0 for e in enlaces}
 
-        self.flag_price = Event()
-
     def dar_pose(self):
         pose = Pose()
 
@@ -86,20 +84,21 @@ class IMU:
 
         #Cuando ambos se actualicen calcular w y volver a calcular grad y hessian
         #por ahora feo con un while ahi
-        self.guardar_info(info)
+        #self.guardar_info(info)
 
-        if np.sum(self.is_link_info_new.values()) == self.num_links:
-            #TODO: Terminar esto. Hay que calcular los nuevos grad y hessian.
-            #Calcular los nuevos grad y hessian y retornarlos para publicar
-            #Tambien se indica que los valores de grad y hessian son viejos
-            self.is_link_info_new = dict.fromkeys(self.is_link_info_new, 0)
-
-            return self.grad, self.hessian
-        else:
-            #Si entra aqui es porque no tiene los valores actualizados de sus vecinos
-            #Se retorna -1 para indicarle al nodo que no publique
-            print("No deberia entrar aqui: Suma = {}".format(np.sum(self.is_link_info_new.values())))
-            return -1
+        # if np.sum(self.is_link_info_new.values()) == self.num_links:
+        #     #TODO: Terminar esto. Hay que calcular los nuevos grad y hessian.
+        #     #Calcular los nuevos grad y hessian y retornarlos para publicar
+        #     #Tambien se indica que los valores de grad y hessian son viejos
+        #     self.is_link_info_new = dict.fromkeys(self.is_link_info_new, 0)
+        #
+        #     return self.grad, self.hessian
+        # else:
+        #     #Si entra aqui es porque no tiene los valores actualizados de sus vecinos
+        #     #Se retorna -1 para indicarle al nodo que no publique
+        #     print("No deberia entrar aqui: Suma = {}".format(np.sum(self.is_link_info_new.values())))
+        #     return -1
+        return self.grad, self.hessian
 
     def guardar_info(self, info):
         self.link_info[info.id] = info.price

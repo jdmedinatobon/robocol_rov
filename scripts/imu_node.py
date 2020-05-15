@@ -46,6 +46,8 @@ class ImuNode:
 
         rate = rospy.Rate(self.f)
 
+        self.time = time.time()
+
         for e in enlaces:
             rospy.Subscriber('/' + e + '/info', LinkInfo, self.link_info_callback)
 
@@ -88,8 +90,8 @@ class ImuNode:
     	self.z_gazebo = msg.pose[1].position.z
 
     def link_info_callback(self, info):
-
-        print("Callback de enlace llamado. Info: {}".format(info))
+        #print("Callback de enlace llamado. Info: {}, Tiempo entre llamados :{}".format(info, time.time()-self.time))
+        t1 = time.time()
         if self.price_counter < self.price_max_iter:
             self.info.grad, self.info.hessian = self.imu.calcular_info(info)
             self.price_counter += 1
@@ -99,6 +101,12 @@ class ImuNode:
             self.imu_info.publish(self.info)
             self.flag_price.set()
             self.price_counter = 0
+        print("Tiempo ifs: {}".format(time.time()-t1))
+        self.time = time.time()
+
+        # print("En sensor: {}".format(time.time()))
+        # print("En link: {}".format(info.price))
+        print("Tiempo llamada: {}".format(time.time()-info.price))
 
     def initialize_sensors(self):
 
