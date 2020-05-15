@@ -3,6 +3,7 @@ import numpy as np
 import rospy
 from geometry_msgs.msg import Pose
 from classes import State
+from pyquaternion import Quaternion
 
 class IMU:
     def __init__(self, enlaces):
@@ -55,12 +56,15 @@ class IMU:
         self.state.z = pose.pose[1].position.z
 
     def actualizar(self, acel, sample_time):
-    	self.state.x = self.state.x + sample_time*self.state.vx + (((sample_time)**2)/2.0)*(acel.linear_acceleration.x-self.bias_x)
-        self.state.y = self.state.y + sample_time*self.state.vy + (((sample_time)**2)/2.0)*(acel.linear_acceleration.y-self.bias_y)
-        self.state.z = self.state.z + sample_time*self.state.vz + (((sample_time)**2)/2.0)*(acel.linear_acceleration.z-self.bias_z)
-        self.state.vx = self.state.vx + sample_time*(acel.linear_acceleration.x)
-        self.state.vy = self.state.vy + sample_time*(acel.linear_acceleration.y)
-        self.state.vz = self.state.vz + sample_time*(acel.linear_acceleration.z-9.8)
+        quaternion= Quaternion(acel.orientation.x,acel.orientation.y,acel.orientation.z,acel.orientation.w)
+        aceler= quaternion.rotate(np.array([acel.linear_acceleration.x, acel.linear_acceleration.y, acel.linear_acceleration.z-self.bias_z]))
+        print(aceler)
+    	self.state.x = self.state.x + sample_time*self.state.vx + (((sample_time)**2)/2.0)*(aceler[0]-self.bias_x)
+        self.state.y = self.state.y + sample_time*self.state.vy + (((sample_time)**2)/2.0)*(aceler[1]-self.bias_y)
+        self.state.z = self.state.z + sample_time*self.state.vz + (((sample_time)**2)/2.0)*(aceler[2])
+        self.state.vx = self.state.vx + sample_time*(aceler[0])
+        self.state.vy = self.state.vy + sample_time*(aceler[1])
+        self.state.vz = self.state.vz + sample_time*(aceler[2])
 
     def calcular_grad(self):
         #TODO: Poner aqui como calcular el gradiente

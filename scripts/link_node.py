@@ -55,14 +55,15 @@ if __name__ == '__main__':
     	if len(sys.argv) < 3:
             print("Se necesitan por lo menos 2 parametros para que funcione. Ej: [imu1 imu2]")
         else:
-            rospy.init_node(sys.argv[1] + '_node', anonymous=True) #Se inicia el nodo
+            args = rospy.myargv(sys.argv)
+            rospy.init_node(args[1] + '_node', anonymous=True) #Se inicia el nodo
 
         lista_sensores = []
         i = 2
-        while i < len(sys.argv):
-            lista_sensores.append(sys.argv[i])
+        while i < len(args):
+            lista_sensores.append(args[i])
             i+=1
-        node = LinkNode(sys.argv[1], lista_sensores)
+        node = LinkNode(args[1], lista_sensores)
         rospy.spin()
     except rospy.ROSInterruptException:
 

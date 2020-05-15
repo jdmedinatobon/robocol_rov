@@ -1,6 +1,6 @@
 <launch>
 
-  <node name="imu1" pkg="robocol_rov" type="imu_node.py" args="imu1 link1 link2">
+  <node name="imu1" pkg="robocol_rov" type="imu_node.py" output = "screen" args="imu1 link1 link2">
   </node>
 
   <node name="imu2" pkg="robocol_rov" type="imu_node.py" args="imu2 link2">
