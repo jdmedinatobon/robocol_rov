@@ -15,6 +15,7 @@ from link_class import Link
 
 class LinkNode:
     def __init__(self, namespace, sensores):
+        self.f = 50
 
     	self.link = Link(sensores)
         self.info = LinkInfo()
@@ -27,19 +28,16 @@ class LinkNode:
 
         self.link_info = rospy.Publisher('/' + self.info.id + '/info', LinkInfo, queue_size = 10)
 
-        rate = rospy.Rate(50)
-        print("Sensores: {}".format(sensores))
+        rate = rospy.Rate(self.f)
+
         for s in sensores:
             rospy.Subscriber('/' + s + '/info', ImuInfo, self.sensor_info_callback)
 
         while not rospy.is_shutdown():
-       		if self.done:
-                 pose_imu = self.imu.dar_pose()
-                 imu_pos.publish(pose_imu)
        		rate.sleep()
 
     def sensor_info_callback(self, msg):
-        print("Se llamo callback en link.")
+        print("Se llamo callback en link sensor.")
         print(msg)
     	if self.first:
             self.initialize_link()
@@ -47,7 +45,7 @@ class LinkNode:
         elif msg.done:
             self.first = True
         else:
-            self.info = self.link.calcular_info()
+            self.info.price = self.link.calcular_info()
             self.link_info.publish(self.info)
 
     def initialize_link(self):

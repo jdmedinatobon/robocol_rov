@@ -88,7 +88,7 @@ class IMU:
         #por ahora feo con un while ahi
         self.guardar_info(info)
 
-        if np.sum(self.is_link_info_new.values) == self.num_links:
+        if np.sum(self.is_link_info_new.values()) == self.num_links:
             #TODO: Terminar esto. Hay que calcular los nuevos grad y hessian.
             #Calcular los nuevos grad y hessian y retornarlos para publicar
             #Tambien se indica que los valores de grad y hessian son viejos
@@ -98,8 +98,11 @@ class IMU:
         else:
             #Si entra aqui es porque no tiene los valores actualizados de sus vecinos
             #Se retorna -1 para indicarle al nodo que no publique
+            print("No deberia entrar aqui: Suma = {}".format(np.sum(self.is_link_info_new.values())))
             return -1
 
     def guardar_info(self, info):
         self.link_info[info.id] = info.price
         self.is_link_info_new[info.id] = 1
+
+        print("Link info = ".format(self.link_info))

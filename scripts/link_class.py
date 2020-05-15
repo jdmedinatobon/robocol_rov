@@ -35,5 +35,6 @@ class Link:
         self.current_sum = np.sum(pi_zero)
 
     def calcular_info(self):
-        self.price = 1/(1/self.hessian + self.initial_sum)*(self.initial_sum-self.current_sum-self.sum_sensor_info - (self.grad/self.hessian))
+        # self.price = 1/(1/self.hessian + self.initial_sum)*(self.initial_sum-self.current_sum-self.sum_sensor_info - (self.grad/self.hessian))
+        self.price = 2
         return self.price

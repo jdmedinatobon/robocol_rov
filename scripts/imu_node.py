@@ -2,7 +2,7 @@
 import rospy
 import sys
 
-import math
+import math, time
 from threading import Event
 
 import sys, unittest
@@ -19,6 +19,7 @@ from imu_class import IMU
 class ImuNode:
     def __init__(self, namespace, enlaces):
     	self.namespace = namespace
+        self.f = 500
     	print(self.namespace + '_node: initializing node')
 
     	self.imu = IMU(enlaces)
@@ -43,20 +44,23 @@ class ImuNode:
         self.imu_pos = rospy.Publisher('/' + namespace + '/pos', Pose, queue_size=10)
         self.imu_info = rospy.Publisher('/' + namespace + '/info', ImuInfo, queue_size = 10)
 
-        rate = rospy.Rate(50)
+        rate = rospy.Rate(self.f)
 
         for e in enlaces:
             rospy.Subscriber('/' + e + '/info', LinkInfo, self.link_info_callback)
 
+
         while not rospy.is_shutdown():
-       	    if self.done:
-                pose_imu = self.imu.dar_pose()
-                self.imu_pos.publish(pose_imu)
+            # #self.imu_info.publish(self.info)
+            #
+            # if self.done:
+            #     pose_imu = self.imu.dar_pose()
+            #     self.imu_pos.publish(pose_imu)
        		rate.sleep()
 
     def imu_callback(self, msg):
     	if self.first == False:
-	    	self.imu.actualizar(msg, 1/50.0)
+	    	self.imu.actualizar(msg, 1./self.f)
 	        #print(msg.linear_acceleration.x)
 	        self.done = True
 
@@ -66,7 +70,7 @@ class ImuNode:
         #Por ahora chambon con un while ahi con un numero maximo de iteraciones, pero
         #debe haber una mejor forma de hacerlo.
         #self.flag_consensus.clear()
-
+        print("imu_callback llamado")
         self.calcular_consensus()
 
         #No creo que esta flag se necesite
@@ -87,13 +91,14 @@ class ImuNode:
 
         print("Callback de enlace llamado. Info: {}".format(info))
         if self.price_counter < self.price_max_iter:
-            self.info = self.imu.calcular_info(info)
+            self.info.grad, self.info.hessian = self.imu.calcular_info(info)
             self.price_counter += 1
-            imu_info.publish(self.info)
+            self.imu_info.publish(self.info)
         else:
-            self.info.bool = True
-            imu_info.publish(self.info)
+            self.info.done = True
+            self.imu_info.publish(self.info)
             self.flag_price.set()
+            self.price_counter = 0
 
     def initialize_sensors(self):
 
@@ -109,18 +114,21 @@ class ImuNode:
     def calcular_consensus(self):
         #Aqui se inicia a resolver el problema de optimizacion
         #Recordar que j se refiere a las iteraciones del problema de optimizacion
+
         j = 0
         while j < self.consensus_max_iter:
+            tiempo = time.time()
             #Paso 1: Esperar a que w (price) este calculado.
             #Usar un Event creo que funciona bastante bien.
             #Esto toca hacerlo en cada iteracion del problema de optimizacion
             print("Iniciando")
             self.initialize_sensors()
             self.flag_price.clear()
-            self.flag_price.wait()
+            self.flag_price.wait(timeout = 1/50.0)
 
-            self.imu.estimated_state += 1
-
+            self.imu.estimated_state.x += 1
+            delta = time.time()-tiempo
+            print("j = {}. Tiempo Iteracion: {} segundos".format(j, delta))
             j += 1
 
         pose_imu = self.imu.dar_pose()
