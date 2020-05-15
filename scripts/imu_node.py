@@ -54,10 +54,10 @@ class ImuNode:
 
         while not rospy.is_shutdown():
             # #self.imu_info.publish(self.info)
-            #
-            # if self.done:
-            #     pose_imu = self.imu.dar_pose()
-            #     self.imu_pos.publish(pose_imu)
+
+            if self.done:
+                pose_imu = self.imu.dar_pose()
+                self.imu_pos.publish(pose_imu)
        		rate.sleep()
 
     def imu_callback(self, msg):
