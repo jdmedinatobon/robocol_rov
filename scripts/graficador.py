@@ -28,28 +28,28 @@ class graficador():
         x_gazebo = msg.pose[1].position.x
         y_gazebo = msg.pose[1].position.y
         z_gazebo = msg.pose[1].position.z
-        pass
+
     def imu_1(self, msg):
         global x_imu_1, y_imu_1, z_imu_1, flag_1
         x_imu_1 = msg.position.x
         y_imu_1 = msg.position.y
         z_imu_1 = msg.position.z
         flag_1 = True
-        pass
+
     def imu_2(self, msg):
         global x_imu_2, y_imu_2, z_imu_2, flag_2
         x_imu_2 = msg.position.x
         y_imu_2 = msg.position.y
         z_imu_2 = msg.position.z
         flag_2 = True
-        pass
+
     def imu_3(self, msg):
         global x_imu_3, y_imu_3, z_imu_3, flag_3
         x_imu_3 = msg.position.x
         y_imu_3 = msg.position.y
         z_imu_3 = msg.position.z
         flag_3 = True
-        pass
+
 
     def animate(i,j):
         global axs, x_gazebo, y_gazebo, z_gazebo, x_imu_1, y_imu_1, z_imu_1, x_imu_2, y_imu_2, z_imu_2, x_imu_3, y_imu_3, z_imu_3, flag_1, flag_2, flag_3
