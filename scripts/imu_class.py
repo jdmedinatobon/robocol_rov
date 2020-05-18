@@ -19,6 +19,7 @@ class IMU:
 
         #TODO: Las siguientes matrices todas toca cambiarlas por sus valores reales.
         self.H = np.diag(np.ones(3))
+
         #Matriz de covarianza del ruido del sistema
         self.Q = np.diag(np.ones(3))
 
@@ -70,11 +71,11 @@ class IMU:
     def calcular_grad(self):
         #TODO: Poner aqui como calcular el gradiente
         #FIXME: Esto no sirve aun. Mirar si lo de State si es necesario o solo usar un vector de 6 y ya.
-        self.grad = inv(self.P)*(self.state.x - self.estimated_state.x)-self.H.T*inv(self.R)*(self.sensor_observation-self.H*self.state.x)
+        self.grad += 1# inv(self.P)*(self.state.x - self.estimated_state.x)-self.H.T*inv(self.R)*(self.sensor_observation-self.H*self.state.x)
 
     def calcular_hessian(self):
         #TODO: Poner aqui como calcular la hessiana
-        self.hessian = inv(self.P) + self.H.T*inv(self.R)*self.H
+        self.hessian += 1#inv(self.P) + self.H.T*inv(self.R)*self.H
 
     def calcular_info(self, prices):
         self.PI = self.hessian*np.sum(prices.values())

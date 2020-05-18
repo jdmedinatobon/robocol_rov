@@ -120,9 +120,12 @@ class ImuNode:
         #self.time = time.time()
 
     def initialize_sensors(self):
+        self.imu.calcular_grad()
+        self.imu.calcular_hessian()
+
         self.info.done = False
-        self.init.grad = self.imu.calcular_grad()
-        self.init.hessian = self.imu.calcular_hessian()
+        self.init.grad = self.imu.grad
+        self.init.hessian = self.imu.hessian
         self.init.num_links = self.num_links
         #self.info.done = False
         self.imu_init_pub.publish(self.init)
