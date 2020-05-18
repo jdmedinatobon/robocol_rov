@@ -105,6 +105,7 @@ class ImuNode:
             # self.info.grad, self.info.hessian = self.imu.calcular_info(info)
             self.link_info[info.id] = info.price
             self.is_link_info_new[info.id] = 1
+            # print("Sensor: {}. Suma: {}".format(self.namespace,sum(self.is_link_info_new.values())))
 
             if sum(self.is_link_info_new.values()) == self.num_links:
                 self.price_counter += 1
