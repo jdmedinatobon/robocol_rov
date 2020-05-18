@@ -12,6 +12,7 @@ from geometry_msgs.msg import Pose, Quaternion, Point, PoseStamped, PoseWithCova
 from sensor_msgs.msg import Imu
 from gazebo_msgs.msg import ModelStates
 
+from robocol_rov.msg import ImuInit
 from robocol_rov.msg import ImuInfo
 from robocol_rov.msg import LinkInfo
 from imu_class import IMU
@@ -23,11 +24,17 @@ class ImuNode:
     	print(self.namespace + '_node: initializing node')
 
     	self.imu = IMU(enlaces)
+        self.init = ImuInit()
+        self.init.id = namespace
         self.info = ImuInfo()
         self.info.id = namespace
+        self.num_links = len(enlaces)
+        self.enlaces = enlaces
 
         self.price_counter = 0
         self.price_max_iter = 100
+        self.link_info = {e : 0 for e in enlaces}
+        self.is_link_info_new = {e : 0 for e in enlaces}
 
         #Este counter no hace falta creo.
         #self.consensus_counter = 0
@@ -42,7 +49,8 @@ class ImuNode:
         rospy.Subscriber('/gazebo/model_states', ModelStates, self.model_states_callback)
        	rospy.Subscriber('/' + namespace +'/imu', Imu, self.imu_callback)
         self.imu_pos = rospy.Publisher('/' + namespace + '/pos', Pose, queue_size=10)
-        self.imu_info = rospy.Publisher('/' + namespace + '/info', ImuInfo, queue_size = 10)
+        self.imu_init_pub = rospy.Publisher('/' + namespace + '/init', ImuInit, queue_size = 10)
+        self.imu_info_pub = rospy.Publisher('/' + namespace + '/info', ImuInfo, queue_size = 10)
 
         rate = rospy.Rate(self.f)
 
@@ -51,9 +59,8 @@ class ImuNode:
         for e in enlaces:
             rospy.Subscriber('/' + e + '/info', LinkInfo, self.link_info_callback)
 
-
         while not rospy.is_shutdown():
-            # #self.imu_info.publish(self.info)
+            # #self.imu_info_pub.publish(self.info)
 
             if self.done:
                 pose_imu = self.imu.dar_pose()
@@ -92,25 +99,33 @@ class ImuNode:
     	self.z_gazebo = msg.pose[1].position.z
 
     def link_info_callback(self, info):
-        #print("Callback de enlace llamado. Info: {}, Tiempo entre llamados :{}".format(info, time.time()-self.time))
+        # print("Callback de enlace llamado. Info: {}, Tiempo entre llamados :{}".format(info, time.time()-self.time))
 
         if self.price_counter < self.price_max_iter:
-            self.info.grad, self.info.hessian = self.imu.calcular_info(info)
-            self.price_counter += 1
-            self.imu_info.publish(self.info)
+            # self.info.grad, self.info.hessian = self.imu.calcular_info(info)
+            self.link_info[info.id] = info.price
+            self.is_link_info_new[info.id] = 1
+
+            if sum(self.is_link_info_new.values()) == self.num_links:
+                self.price_counter += 1
+                self.info.PI = self.imu.calcular_info(self.link_info)
+                self.imu_info_pub.publish(self.info)
+                self.is_link_info_new = {e : 0 for e in self.enlaces}
+                # print("Aqui")
         else:
             self.info.done = True
-            self.imu_info.publish(self.info)
+            self.imu_info_pub.publish(self.info)
             self.flag_price.set()
             self.price_counter = 0
         #self.time = time.time()
 
     def initialize_sensors(self):
-
-        self.info.grad = self.imu.calcular_grad()
-        self.info.hessian = self.imu.calcular_hessian()
         self.info.done = False
-        self.imu_info.publish(self.info)
+        self.init.grad = self.imu.calcular_grad()
+        self.init.hessian = self.imu.calcular_hessian()
+        self.init.num_links = self.num_links
+        #self.info.done = False
+        self.imu_init_pub.publish(self.init)
 
     def calcular_consensus(self):
         #Aqui se inicia a resolver el problema de optimizacion
@@ -125,7 +140,7 @@ class ImuNode:
 
             self.initialize_sensors()
             self.flag_price.clear()
-            self.flag_price.wait(timeout = 1/50.0)
+            self.flag_price.wait()#timeout = 1/50.0)
 
             self.imu.estimated_state.x += 1
             delta = time.time()-tiempo

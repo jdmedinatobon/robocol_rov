@@ -1,4 +1,3 @@
 string id
-float64 grad
-float64 hessian
+float64 PI
 bool done
