@@ -15,4 +15,7 @@
   <node name="link2" pkg="robocol_rov" type="link_node.py" args="link2 imu1 imu2">
   </node>
 
+  <node name="graficador" pkg="robocol_rov" type="graficador.py">
+  </node>
+
 </launch>
