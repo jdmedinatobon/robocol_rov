@@ -121,6 +121,7 @@ class ImuNode:
         #self.time = time.time()
 
     def initialize_sensors(self):
+        self.calcular_x_barra()
         self.imu.calcular_grad()
         self.imu.calcular_hessian()
 
