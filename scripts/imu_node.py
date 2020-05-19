@@ -4,6 +4,7 @@ import sys
 
 import math, time
 from threading import Event
+import numpy as np
 
 import sys, unittest
 import os, os.path, time
@@ -121,15 +122,19 @@ class ImuNode:
         #self.time = time.time()
 
     def initialize_sensors(self):
-        self.calcular_x_barra()
+        self.imu.calcular_x_barra()
         self.imu.calcular_grad()
         self.imu.calcular_hessian()
 
         self.info.done = False
-        self.init.grad = self.imu.grad
-        self.init.hessian = self.imu.hessian
+
+        print(self.imu.grad.shape)
+
+        self.init.grad = self.imu.grad.flatten()#self.imu.grad.tolist()
+        self.init.hessian = np.diag(self.imu.hessian)
         self.init.num_links = self.num_links
         #self.info.done = False
+        print(self.init)
         self.imu_init_pub.publish(self.init)
 
     def calcular_consensus(self):
