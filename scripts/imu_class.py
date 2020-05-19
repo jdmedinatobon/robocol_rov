@@ -11,7 +11,7 @@ class IMU:
     def __init__(self, enlaces):
         self.state = np.zeros(6,1) # esto en el paper es equivalente a z, la estimacion del sensor
         self.estimated_state = np.zeros(6,1) # esto en el paper es equivalente a x barra, la estimacion realizada a partir de nuestro modelo
-        self.x_consensus = np.zeros(6,1) # esto es lo que esperamos llegue a ser magio y converger a un valor global para todos los sensores... mistico? tal vez
+        self.x_consensus = np.zeros(6,1) # esto es lo que esperamos llegue a ser magico y converger a un valor global para todos los sensores... mistico? tal vez. Hotel? Trivago
 
         self.bias_x = 0
         self.bias_y = 0
