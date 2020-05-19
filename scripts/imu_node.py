@@ -33,13 +33,11 @@ class ImuNode:
         self.enlaces = enlaces
 
         self.price_counter = 0
-        self.price_max_iter = 100
+        self.price_max_iter = 5
+        self.consensus_max_iter = 5
+
         self.link_info = {e : 0 for e in enlaces}
         self.is_link_info_new = {e : 0 for e in enlaces}
-
-        #Este counter no hace falta creo.
-        #self.consensus_counter = 0
-        self.consensus_max_iter = 100
 
         self.first = True
         self.done = False
@@ -82,7 +80,7 @@ class ImuNode:
         #Por ahora chambon con un while ahi con un numero maximo de iteraciones, pero
         #debe haber una mejor forma de hacerlo.
         #self.flag_consensus.clear()
-        print("imu_callback llamado. Tiempo entre llamados: {} segundos".format(time.time()-self.time))
+        # print("imu_callback llamado. Tiempo entre llamados: {} segundos".format(time.time()-self.time))
         pose_imu = self.imu.dar_pose()
         # self.imu_pos.publish(pose_imu)
         # print(pose_imu)
@@ -118,6 +116,8 @@ class ImuNode:
                 # print(self.link_info)
                 self.imu.calcular_info(self.link_info)
                 self.info.PI = self.imu.PI
+
+                # print(self.imu.PI)
                 # print(self.info.PI)
                 self.imu_info_pub.publish(self.info)
                 self.is_link_info_new = {e : 0 for e in self.enlaces}
@@ -132,7 +132,6 @@ class ImuNode:
     def initialize_sensors(self):
         self.imu.calcular_x_barra()
         self.imu.calcular_grad()
-        print(self.imu.grad)
         self.imu.calcular_hessian()
 
         self.info.done = False
@@ -160,17 +159,18 @@ class ImuNode:
             self.flag_price.clear()
             self.flag_price.wait()#timeout = 1/50.0)
 
-            print("PI:")
-            print(self.imu.PI)
+            # print("PI:")
+            # print(self.imu.PI)
             self.imu.calcular_x_consensus()
 
             delta = time.time()-tiempo
-            print("j = {}. Tiempo Iteracion: {} milisegundos".format(j, delta*1000))
+            #print("j = {}. Tiempo Iteracion: {} milisegundos".format(j, delta*1000))
             j += 1
 
         pose_imu = self.imu.dar_pose()
         self.imu_pos.publish(pose_imu)
-        print("Optimizacion Terminada. Estimacion: {}".format(pose_imu))
+        # print("Optimizacion Terminada. Estimacion: {}".format(pose_imu))
+        print("Matriz de covarianza: {}".format(self.imu.P[0,0]))
 
 if __name__ == '__main__':
     try:

@@ -19,8 +19,7 @@ class IMU:
 
         self.s = 0.00001 #Step size
 
-        # self.x_barra = np.ones(6)
-
+        #Esta es la matriz Fk del modelo
         self.F = np.eye(6)
 
         #TODO: Las siguientes matrices todas toca cambiarlas por sus valores reales.
@@ -33,14 +32,14 @@ class IMU:
         self.R = np.eye(6)
 
         #Matriz de covarianza del error. Lo que es Pk barra en el paper.
-        self.P = np.eye(6)
+        self.P = np.zeros((6,6))
 
         #Matriz de restriccion utilizada en el problema de optimizacion
         self.C = np.ones((6,6))
 
-        self.grad = 1.0
-        self.hessian = 1.0
-        self.PI = 1.0
+        self.grad = np.ones((6,1))
+        self.hessian = np.ones((6,6))
+        self.PI = np.ones((6,1))
         #self.num_links = len(enlaces)
 
         #Por ahora lo de ver cuando estan actualizados chambon con otro diccionario
@@ -70,6 +69,23 @@ class IMU:
         self.x_consensus[2] = pose.pose[1].position.z
 
     def actualizar(self, acel, sample_time):
+        self.calcular_z(acel, sample_time)
+
+        #TODO: Terminar este metodo de F
+        self.calcular_F()
+
+        self.calcular_H(sample_time)
+        self.calcular_P()
+
+    def calcular_grad(self):
+        #TODO: Poner aqui como calcular el gradiente
+        self.grad = np.dot(inv(self.P), self.x_consensus - self.estimated_state)#np.dot(inv(self.P), (self.x_consensus - self.estimated_state))-np.dot(np.dot(self.H.T, inv(self.R)),(self.state-np.dot(self.H, self.state)))
+
+    def calcular_hessian(self):
+        #TODO: Poner aqui como calcular la hessiana
+        self.hessian = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)),self.H)
+
+    def calcular_z(self, acel, sample_time):
         quaternion= Quaternion(acel.orientation.x,acel.orientation.y,acel.orientation.z,acel.orientation.w)
         aceler= quaternion.rotate(np.array([acel.linear_acceleration.x, acel.linear_acceleration.y, acel.linear_acceleration.z-self.bias_z]))
 
@@ -79,20 +95,19 @@ class IMU:
         self.state[3] += sample_time*(aceler[0])
         self.state[4] += sample_time*(aceler[1])
         self.state[5] += sample_time*(aceler[2])
-        self.F[0,3] = sample_time
-        self.F[1,4] = sample_time
-        self.F[2,5] = sample_time
 
-        self.P = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)) , self.H)
+    def calcular_F(self):
+        #TODO: Poner como se calcula F.
+        pass
+
+    def calcular_H(self, sample_time):
+        self.H[0,3] = sample_time
+        self.H[1,4] = sample_time
+        self.H[2,5] = sample_time
+
+    def calcular_P(self):
         self.P = np.dot(np.dot(self.F,self.P), self.F.T) + self.Q
-
-    def calcular_grad(self):
-        #TODO: Poner aqui como calcular el gradiente
-        self.grad = np.dot(inv(self.P), self.x_consensus - self.estimated_state)#np.dot(inv(self.P), (self.x_consensus - self.estimated_state))-np.dot(np.dot(self.H.T, inv(self.R)),(self.state-np.dot(self.H, self.state)))
-
-    def calcular_hessian(self):
-        #TODO: Poner aqui como calcular la hessiana
-        self.hessian = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)),self.H)
+        self.P = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)) , self.H)
 
     def calcular_info(self, prices):
         self.PI = np.diag(self.hessian)*np.sum(prices.values())
