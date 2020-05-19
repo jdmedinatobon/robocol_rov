@@ -17,7 +17,7 @@ class Link:
     def reiniciar(self, grads, hessians, num_links):
         np_grads = np.array(grads.values())
         np_hessians = np.array(hessians.values())
-        np_num_links = np.array(num_links.values())
+        np_num_links = np.reshape(np.array(num_links.values()), (-1, 1))
         self.sum_sensor_info = np.sum(np_grads/np_hessians)
         pi_zeros = np_num_links/np_hessians
         self.initial_sum = np.sum(pi_zeros)
