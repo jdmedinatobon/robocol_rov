@@ -73,7 +73,6 @@ class ImuNode:
 	        #print(msg.linear_acceleration.x)
             self.done = True
 
-
         #TODO: Terminar esto. No estoy seguro aun como organizarlos para que todo
         #este bien sincronizado. Creo que voy a usar Threads.
         #Aqui se debe indicar que se comience a solucionar el problema de manera distribuida.

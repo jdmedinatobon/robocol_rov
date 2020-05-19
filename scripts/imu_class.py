@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import numpy as np
 from numpy.linalg import inv
+import copy
 import rospy
 from geometry_msgs.msg import Pose
 from classes import State
@@ -32,7 +33,7 @@ class IMU:
         self.R = np.eye(6)
 
         #Matriz de covarianza del error. Lo que es Pk barra en el paper.
-        self.P = np.zeros((6,6))
+        self.P = copy.copy(self.Q)#np.zeros((6,6))
 
         #Matriz de restriccion utilizada en el problema de optimizacion
         self.C = np.ones((6,6))
@@ -72,22 +73,22 @@ class IMU:
         self.calcular_z(acel, sample_time)
 
         #TODO: Terminar este metodo de F
-        self.calcular_F()
+        self.calcular_F(sample_time)
 
         self.calcular_H(sample_time)
         self.calcular_P()
 
     def calcular_grad(self):
         #TODO: Poner aqui como calcular el gradiente
-        self.grad = np.dot(inv(self.P), self.x_consensus - self.estimated_state)#np.dot(inv(self.P), (self.x_consensus - self.estimated_state))-np.dot(np.dot(self.H.T, inv(self.R)),(self.state-np.dot(self.H, self.state)))
+        self.grad = np.dot(inv(self.P), self.x_consensus - self.estimated_state) - np.dot(inv(self.P), (self.x_consensus - self.estimated_state))-np.dot(np.dot(self.H.T, inv(self.R)),(self.state-np.dot(self.H, self.state)))
 
     def calcular_hessian(self):
         #TODO: Poner aqui como calcular la hessiana
         self.hessian = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)),self.H)
 
     def calcular_z(self, acel, sample_time):
-        quaternion= Quaternion(acel.orientation.x,acel.orientation.y,acel.orientation.z,acel.orientation.w)
-        aceler= quaternion.rotate(np.array([acel.linear_acceleration.x, acel.linear_acceleration.y, acel.linear_acceleration.z-self.bias_z]))
+        quaternion = Quaternion(acel.orientation.x,acel.orientation.y,acel.orientation.z,acel.orientation.w)
+        aceler = quaternion.rotate(np.array([acel.linear_acceleration.x, acel.linear_acceleration.y, acel.linear_acceleration.z-self.bias_z]))
 
     	self.state[0] += sample_time*self.state[3] + (((sample_time)**2)/2.0)*(aceler[0]-self.bias_x)
         self.state[1] += sample_time*self.state[4] + (((sample_time)**2)/2.0)*(aceler[1]-self.bias_y)
@@ -96,9 +97,11 @@ class IMU:
         self.state[4] += sample_time*(aceler[1])
         self.state[5] += sample_time*(aceler[2])
 
-    def calcular_F(self):
+    def calcular_F(self, sample_time):
         #TODO: Poner como se calcula F.
-        pass
+        self.F[0,3] = sample_time
+        self.F[1,4] = sample_time
+        self.F[2,5] = sample_time
 
     def calcular_H(self, sample_time):
         self.H[0,3] = sample_time
@@ -106,8 +109,8 @@ class IMU:
         self.H[2,5] = sample_time
 
     def calcular_P(self):
-        self.P = np.dot(np.dot(self.F,self.P), self.F.T) + self.Q
         self.P = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)) , self.H)
+        self.P = np.dot(np.dot(self.F,self.P), self.F.T) + self.Q
 
     def calcular_info(self, prices):
         self.PI = np.diag(self.hessian)*np.sum(prices.values())
@@ -117,5 +120,5 @@ class IMU:
         self.estimated_state = np.dot(self.F, self.x_consensus)# + w_k
 
     def calcular_x_consensus(self):
-        self.delta_x = -np.dot(inv(self.hessian), self.grad) + self.PI #np.dot(np.dot(inv(self.hessian), self.C.T), w)
+        self.delta_x = -np.dot(inv(self.hessian), self.grad) + self.PI
         self.x_consensus = self.x_consensus + self.s*self.delta_x
