@@ -66,7 +66,8 @@ class LinkNode:
                 self.sensor_info[info.id] = info.PI
                 self.is_sensor_info_new[info.id] = 1
             else:
-                self.info.price = self.link.calcular_info(self.sensor_info)
+                self.link.calcular_info(self.sensor_info)
+                self.info.price = self.link.price
                 self.link_info_pub.publish(self.info)
                 self.is_sensor_info_new = {s : 0 for s in self.sensores}
 

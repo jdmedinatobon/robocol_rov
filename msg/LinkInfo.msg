@@ -1,2 +1,2 @@
 string id
-float64 price
+float64[] price

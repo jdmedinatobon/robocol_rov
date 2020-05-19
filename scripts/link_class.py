@@ -6,13 +6,13 @@ from classes import State
 
 class Link:
     def __init__(self, sensores):
-        self.x = 1.0 #Esta se refiere a la variable de slack asociada a este enlace.
+        self.x = np.ones(6) #Esta se refiere a la variables de slack asociadas a este enlace.
         self.price = 0 #TODO: Poner aqui un numero aleatorio. np.random()
-        self.grad = 1.0
-        self.hessian = 2.0
+        self.grad = np.ones(6)
+        self.hessian = np.ones(6)
         self.mu = 1.0 #TODO: Mirar que valor toma. Por ahora en 0.
-        self.initial_sum = 1 #La suma de PI mayuscula en la primera iteracion
-        self.current_sum = 1 #La suma de PI mayuscula en la iteracion actual
+        self.initial_sum = np.ones(6) #La suma de PI mayuscula en la primera iteracion
+        self.current_sum = np.ones(6) #La suma de PI mayuscula en la iteracion actual
 
     def reiniciar(self, grads, hessians, num_links):
         np_grads = np.array(grads.values())
@@ -41,6 +41,4 @@ class Link:
 
     def calcular_info(self, PIs):
         self.calcular_current_sum(PIs)
-        self.price = 1/(1/self.hessian + self.initial_sum)*(self.initial_sum-self.current_sum-self.sum_sensor_info - (self.grad/self.hessian))
-        #self.price = 2
-        return self.price
+        self.price = 1/(1./self.hessian + self.initial_sum)*(self.initial_sum-self.current_sum-self.sum_sensor_info - (self.grad/self.hessian))

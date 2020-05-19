@@ -85,10 +85,10 @@ class ImuNode:
         print("imu_callback llamado. Tiempo entre llamados: {} segundos".format(time.time()-self.time))
         pose_imu = self.imu.dar_pose()
         # self.imu_pos.publish(pose_imu)
-        print(pose_imu)
+        # print(pose_imu)
 
         self.time = time.time()
-        #self.calcular_consensus()
+        self.calcular_consensus()
 
         #No creo que esta flag se necesite
         #self.flag_consensus.wait(timeout = 1/50.0)
@@ -115,7 +115,10 @@ class ImuNode:
 
             if sum(self.is_link_info_new.values()) == self.num_links:
                 self.price_counter += 1
-                self.info.PI = self.imu.calcular_info(self.link_info)
+                # print(self.link_info)
+                self.imu.calcular_info(self.link_info)
+                self.info.PI = self.imu.PI
+                # print(self.info.PI)
                 self.imu_info_pub.publish(self.info)
                 self.is_link_info_new = {e : 0 for e in self.enlaces}
                 # print("Aqui")
@@ -129,6 +132,7 @@ class ImuNode:
     def initialize_sensors(self):
         self.imu.calcular_x_barra()
         self.imu.calcular_grad()
+        print(self.imu.grad)
         self.imu.calcular_hessian()
 
         self.info.done = False
@@ -138,7 +142,8 @@ class ImuNode:
         self.init.num_links = self.num_links
         #self.info.done = False
         #print(self.init)
-        #self.imu_init_pub.publish(self.init)
+        self.imu_init_pub.publish(self.init)
+        print(self.init)
 
     def calcular_consensus(self):
         #Aqui se inicia a resolver el problema de optimizacion
@@ -155,7 +160,13 @@ class ImuNode:
             self.flag_price.clear()
             self.flag_price.wait()#timeout = 1/50.0)
 
-            self.imu.estimated_state.x += 1
+            print("Consensus : {}".format(self.imu.x_consensus))
+            print("Estimated: {}".format(self.imu.estimated_state))
+            w = np.ones((6,1))
+            print(w)
+            self.imu.calcular_x_consensus(w)
+            print("Consensus Despues : {}".format(self.imu.x_consensus))
+
             delta = time.time()-tiempo
             print("j = {}. Tiempo Iteracion: {} milisegundos".format(j, delta*1000))
             j += 1

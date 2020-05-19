@@ -9,7 +9,7 @@ from threading import Event
 
 class IMU:
     def __init__(self, enlaces):
-        self.state = np.zeros((6,1)) # esto en el paper es equivalente a z, la estimacion del sensor
+        self.state = np.ones((6,1)) # esto en el paper es equivalente a z, la estimacion del sensor
         self.estimated_state = np.zeros((6,1)) # esto en el paper es equivalente a x barra, la estimacion realizada a partir de nuestro modelo
         self.x_consensus = np.zeros((6,1)) # esto es lo que esperamos llegue a ser magico y converger a un valor global para todos los sensores... mistico? tal vez. Hotel? Trivago
 
@@ -19,23 +19,21 @@ class IMU:
 
         self.s = 0.00001 #Step size
 
-        self.x_barra = np.ones(6)
+        # self.x_barra = np.ones(6)
 
-        self.Fk = np.diag(np.ones(6)) # matriz de representacion de nuestro modelo
-
-        self.F = np.diag(np.ones(6))
+        self.F = np.eye(6)
 
         #TODO: Las siguientes matrices todas toca cambiarlas por sus valores reales.
-        self.H = np.diag(np.ones(6))
+        self.H = np.eye(6)
 
         #Matriz de covarianza del ruido del sistema
-        self.Q = np.diag(np.ones(6))
+        self.Q = np.eye(6)
 
         #Matriz de covarianza del ruido de la medida
-        self.R = np.diag(np.ones(6))
+        self.R = np.eye(6)
 
         #Matriz de covarianza del error. Lo que es Pk barra en el paper.
-        self.P = np.zeros((6,6))
+        self.P = np.eye(6)
 
         #Matriz de restriccion utilizada en el problema de optimizacion
         self.C = np.ones((6,6))
@@ -84,23 +82,24 @@ class IMU:
         self.F[0,3] = sample_time
         self.F[1,4] = sample_time
         self.F[2,5] = sample_time
-        self.P = np.dot(np.dot(self.F,self.P),np.transpose(self.F)) + self.Q
+
+        # self.P = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)) , self.H)
+        # self.P = np.dot(np.dot(self.F,self.P), self.F.T) + self.Q
 
     def calcular_grad(self):
         #TODO: Poner aqui como calcular el gradiente
-        self.grad = np.dot(inv(self.P), (self.x_consensus - self.estimated_state))-np.dot(np.dot(self.H.T,inv(self.R)),(self.state-np.dot(self.H, self.state)))
+        self.grad = np.dot(inv(self.P), self.x_consensus - self.estimated_state)#np.dot(inv(self.P), (self.x_consensus - self.estimated_state))-np.dot(np.dot(self.H.T, inv(self.R)),(self.state-np.dot(self.H, self.state)))
 
     def calcular_hessian(self):
         #TODO: Poner aqui como calcular la hessiana
-        self.hessian = inv(self.P) + np.dot(np.dot(self.H.T,inv(self.R)),self.H)
+        self.hessian = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)),self.H)
 
     def calcular_info(self, prices):
-        self.PI = self.hessian*np.sum(prices.values())
-        return self.PI
+        self.PI = np.diag(self.hessian)*np.sum(prices.values())
 
     def calcular_x_barra(self): #Le quite lo del w_k por ahora. #, w_k):
-        self.estimated_state = np.dot(self.Fk, self.x_consensus)# + w_k
+        self.estimated_state = np.dot(self.F, self.x_consensus)# + w_k
 
     def calcular_x_consensus(self, w):
         self.delta_x = -np.dot(inv(self.hessian), self.grad) - np.dot(np.dot(inv(self.hessian), self.C.T), w)
-        self.x_consensus = self.x_consensus + s*self.delta_x
+        self.x_consensus = self.x_consensus + self.s*self.delta_x
