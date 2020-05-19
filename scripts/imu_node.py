@@ -143,7 +143,7 @@ class ImuNode:
         #self.info.done = False
         #print(self.init)
         self.imu_init_pub.publish(self.init)
-        print(self.init)
+        # print(self.init)
 
     def calcular_consensus(self):
         #Aqui se inicia a resolver el problema de optimizacion
@@ -160,12 +160,9 @@ class ImuNode:
             self.flag_price.clear()
             self.flag_price.wait()#timeout = 1/50.0)
 
-            print("Consensus : {}".format(self.imu.x_consensus))
-            print("Estimated: {}".format(self.imu.estimated_state))
-            w = np.ones((6,1))
-            print(w)
-            self.imu.calcular_x_consensus(w)
-            print("Consensus Despues : {}".format(self.imu.x_consensus))
+            print("PI:")
+            print(self.imu.PI)
+            self.imu.calcular_x_consensus()
 
             delta = time.time()-tiempo
             print("j = {}. Tiempo Iteracion: {} milisegundos".format(j, delta*1000))

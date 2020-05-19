@@ -96,10 +96,11 @@ class IMU:
 
     def calcular_info(self, prices):
         self.PI = np.diag(self.hessian)*np.sum(prices.values())
+        self.PI = np.reshape(self.PI, (-1,1))
 
     def calcular_x_barra(self): #Le quite lo del w_k por ahora. #, w_k):
         self.estimated_state = np.dot(self.F, self.x_consensus)# + w_k
 
-    def calcular_x_consensus(self, w):
-        self.delta_x = -np.dot(inv(self.hessian), self.grad) - np.dot(np.dot(inv(self.hessian), self.C.T), w)
+    def calcular_x_consensus(self):
+        self.delta_x = -np.dot(inv(self.hessian), self.grad) + self.PI #np.dot(np.dot(inv(self.hessian), self.C.T), w)
         self.x_consensus = self.x_consensus + self.s*self.delta_x
