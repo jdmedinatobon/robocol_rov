@@ -83,8 +83,8 @@ class IMU:
         self.F[1,4] = sample_time
         self.F[2,5] = sample_time
 
-        # self.P = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)) , self.H)
-        # self.P = np.dot(np.dot(self.F,self.P), self.F.T) + self.Q
+        self.P = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)) , self.H)
+        self.P = np.dot(np.dot(self.F,self.P), self.F.T) + self.Q
 
     def calcular_grad(self):
         #TODO: Poner aqui como calcular el gradiente
