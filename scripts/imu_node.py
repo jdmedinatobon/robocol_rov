@@ -63,16 +63,17 @@ class ImuNode:
         while not rospy.is_shutdown():
             # #self.imu_info_pub.publish(self.info)
 
-            if self.done:
-                pose_imu = self.imu.dar_pose()
-                self.imu_pos.publish(pose_imu)
+            # if self.done:
+            #     pose_imu = self.imu.dar_pose()
+            #     self.imu_pos.publish(pose_imu)
+                #print(pose_imu)
        		rate.sleep()
 
     def imu_callback(self, msg):
     	if self.first == False:
-	    	self.imu.actualizar(msg, 1./self.f)
+            self.imu.actualizar(msg, 1./self.f)
 	        #print(msg.linear_acceleration.x)
-	        self.done = True
+            self.done = True
 
 
         #TODO: Terminar esto. No estoy seguro aun como organizarlos para que todo
@@ -82,8 +83,12 @@ class ImuNode:
         #debe haber una mejor forma de hacerlo.
         #self.flag_consensus.clear()
         print("imu_callback llamado. Tiempo entre llamados: {} segundos".format(time.time()-self.time))
+        pose_imu = self.imu.dar_pose()
+        # self.imu_pos.publish(pose_imu)
+        print(pose_imu)
+
         self.time = time.time()
-        self.calcular_consensus()
+        #self.calcular_consensus()
 
         #No creo que esta flag se necesite
         #self.flag_consensus.wait(timeout = 1/50.0)
@@ -128,14 +133,12 @@ class ImuNode:
 
         self.info.done = False
 
-        print(self.imu.grad.shape)
-
         self.init.grad = self.imu.grad.flatten()#self.imu.grad.tolist()
         self.init.hessian = np.diag(self.imu.hessian)
         self.init.num_links = self.num_links
         #self.info.done = False
-        print(self.init)
-        self.imu_init_pub.publish(self.init)
+        #print(self.init)
+        #self.imu_init_pub.publish(self.init)
 
     def calcular_consensus(self):
         #Aqui se inicia a resolver el problema de optimizacion

@@ -17,10 +17,9 @@ class IMU:
         self.bias_y = 0
         self.bias_z = 9.8
 
-        self.s = 0.00001
+        self.s = 0.00001 #Step size
 
-        self.x_barra = []
-
+        self.x_barra = np.ones(6)
 
         self.Fk = np.diag(np.ones(6)) # matriz de representacion de nuestro modelo
 
@@ -75,7 +74,7 @@ class IMU:
     def actualizar(self, acel, sample_time):
         quaternion= Quaternion(acel.orientation.x,acel.orientation.y,acel.orientation.z,acel.orientation.w)
         aceler= quaternion.rotate(np.array([acel.linear_acceleration.x, acel.linear_acceleration.y, acel.linear_acceleration.z-self.bias_z]))
-        #print(aceler)
+
     	self.state[0] += sample_time*self.state[3] + (((sample_time)**2)/2.0)*(aceler[0]-self.bias_x)
         self.state[1] += sample_time*self.state[4] + (((sample_time)**2)/2.0)*(aceler[1]-self.bias_y)
         self.state[2] += sample_time*self.state[5] + (((sample_time)**2)/2.0)*(aceler[2])
@@ -86,7 +85,6 @@ class IMU:
         self.F[1,4] = sample_time
         self.F[2,5] = sample_time
         self.P = np.dot(np.dot(self.F,self.P),np.transpose(self.F)) + self.Q
-        return self.state, self.P
 
     def calcular_grad(self):
         #TODO: Poner aqui como calcular el gradiente
@@ -104,5 +102,5 @@ class IMU:
         self.estimated_state = np.dot(self.Fk, self.x_consensus)# + w_k
 
     def calcular_x_consensus(self, w):
-        self.delta_x = -np.dot(inv(self.hessian),self.grad) - np.dot(np.dot(inv(self.hessian),self.C),w)
+        self.delta_x = -np.dot(inv(self.hessian), self.grad) - np.dot(np.dot(inv(self.hessian), self.C.T), w)
         self.x_consensus = self.x_consensus + s*self.delta_x
