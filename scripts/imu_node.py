@@ -80,15 +80,13 @@ class ImuNode:
             self.done = True
             print(self.delta_time)
 
-
-
         #TODO: Terminar esto. No estoy seguro aun como organizarlos para que todo
         #este bien sincronizado. Creo que voy a usar Threads.
         #Aqui se debe indicar que se comience a solucionar el problema de manera distribuida.
         #Por ahora chambon con un while ahi con un numero maximo de iteraciones, pero
         #debe haber una mejor forma de hacerlo.
         #self.flag_consensus.clear()
-        print("imu_callback llamado. Tiempo entre llamados: {} segundos".format(time.time()-self.time))
+        # print("imu_callback llamado. Tiempo entre llamados: {} segundos".format(time.time()-self.time))
         pose_imu = self.imu.dar_pose()
         # self.imu_pos.publish(pose_imu)
         # print(pose_imu)
@@ -175,12 +173,14 @@ class ImuNode:
             self.imu.calcular_x_consensus()
 
             delta = time.time()-tiempo
-            print("j = {}. Tiempo Iteracion: {} milisegundos".format(j, delta*1000))
+            # print("j = {}. Tiempo Iteracion: {} milisegundos".format(j, delta*1000))
             j += 1
+
 
         pose_imu = self.imu.dar_pose()
         self.imu_pos.publish(pose_imu)
         # print("Optimizacion Terminada. Estimacion: {}".format(pose_imu))
+        print("Estimacion: {}".format(self.imu.x_consensus))
         print("Matriz de covarianza: {}".format(self.imu.P[0,0]))
 
 if __name__ == '__main__':

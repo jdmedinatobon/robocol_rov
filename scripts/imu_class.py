@@ -5,7 +5,7 @@ import copy
 import rospy
 from geometry_msgs.msg import Pose
 from classes import State
-from pyquaternion import Quaternion
+import pyquaternion
 from threading import Event
 from sympy import symbols, Matrix, Transpose
 from sympy import *
@@ -89,8 +89,8 @@ class IMU:
         self.hessian = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)),self.H)
 
     def calcular_z(self, acel, sample_time):
-        quaternion = Quaternion(acel.orientation.x,acel.orientation.y,acel.orientation.z,acel.orientation.w)
-        aceler = quaternion.rotate(np.array([acel.linear_acceleration.x, acel.linear_acceleration.y, acel.linear_acceleration.z-self.bias_z]))
+        quaternion = pyquaternion.Quaternion(acel.orientation.w, acel.orientation.x, acel.orientation.y, acel.orientation.z)
+        aceler = quaternion.rotate((acel.linear_acceleration.x, acel.linear_acceleration.y, acel.linear_acceleration.z-self.bias_z))
 
     	self.state[0] += sample_time*self.state[3] + (((sample_time)**2)/2.0)*(aceler[0]-self.bias_x)
         self.state[1] += sample_time*self.state[4] + (((sample_time)**2)/2.0)*(aceler[1]-self.bias_y)
@@ -151,7 +151,7 @@ class IMU:
 		m = 116 #Kg
 		g = 9.8 #N/Kg (Gravedad)
 		b = 116.2 #Kg
-		W = m*g 
+		W = m*g
 		B = b*g
 
 		I_x = 9.3 #Kg*m2
@@ -172,12 +172,12 @@ class IMU:
 
 		G1=Matrix([[cos(p[4])*cos(p[5]),      sin(p[3])*sin(p[4])*cos(p[5])-cos(p[3])*sin(p[5]),      cos(p[3])*sin(p[4])*cos(p[5])+sin(p[3])*sin(p[5])],
 
-									[cos(p[4])*sin(p[5]),     sin(p[3])*sin(p[4])*sin(p[5])+cos(p[3])*cos(p[5]),      cos(p[3])*sin(p[4])*sin(p[5])-sin(p[3])*cos(p[5])], 
+									[cos(p[4])*sin(p[5]),     sin(p[3])*sin(p[4])*sin(p[5])+cos(p[3])*cos(p[5]),      cos(p[3])*sin(p[4])*sin(p[5])-sin(p[3])*cos(p[5])],
 
 									[-sin(p[4]),              sin(p[3])*cos(p[4]),                                    cos(p[3])*cos(p[4])]])
 		G2 = Matrix([[1,                        sin(p[3])*tan(p[4]),                                    cos(p[3])*tan(p[4])],
 
-									[0,						            cos(p[3]),                                              -sin(p[3])], 
+									[0,						            cos(p[3]),                                              -sin(p[3])],
 
 									[0,                        sin(p[3])*sec(p[4]),                                   cos(p[3])*sec(p[4])]])
 		G = BlockMatrix([[G1,ones(3,3)],[zeros(3,3), G2]])#, np.concatenate((np.zeros((3,3)), G2), axis = 1)), axis = 0 )
@@ -213,27 +213,27 @@ class IMU:
 				          K_ox+K_ox_ox*abs(p[9]), M_oy+M_oy_oy*abs(p[10]), N_oz+N_oz_oz*abs(p[11])
 				          )
 		#-----------------------------------
-		# De aqui en adelante aun no funciona
+		# De aqui en adelante aun no funciona. Lo comete por ahora Borf.
 		#-----------------------------------
-		
-		gs = [  (W-B)*sin(p(5))                                      ;
-		       -(W-B)*cos(p(5))*sin(p(4))                            ;
-		       -(W-B)*cos(p(5))*cos(p(4))                            ;
-		        y_B*B*cos(p(5))*cos(p(4)) - z_B*B*cos(p(5))*sin(p(4));
-		       -z_B*B*sin(p(5))           - x_B*B*cos(p(5))*cos(p(4));
-		        x_B*B*cos(p(5))*sin(p(4)) + y_B*B*sin(p(5))         
-		        ];
 
-		#dv = M\(tao-C*p(7:12)-D*p(7:12)-gs);
+		# gs = [ (W-B)*sin(p(5))
+		#        -(W-B)*cos(p(5))*sin(p(4))
+        #        -(W-B)*cos(p(5))*cos(p(4))
+		#         y_B*B*cos(p(5))*cos(p(4)) - z_B*B*cos(p(5))*sin(p(4))
+		#        -z_B*B*sin(p(5))           - x_B*B*cos(p(5))*cos(p(4))
+		#         x_B*B*cos(p(5))*sin(p(4)) + y_B*B*sin(p(5))
+		#         ];
+        #
+		# #dv = M\(tao-C*p(7:12)-D*p(7:12)-gs);
+        #
+		# dp = [ds1; ds2; dv];
+        #
+		# A = zeros(nx,nx);
+		# for i=1:nx
+		#    for j=1:nx
+		#         derivada = diff(dp(i),p(j));
+		#         A(i,j) = subs(derivada, [p;tao], equils);
+		#    end
+		# end
 
-		dp = [ds1; ds2; dv];
-
-		A = zeros(nx,nx);
-		for i=1:nx
-		   for j=1:nx 
-		        derivada = diff(dp(i),p(j));
-		        A(i,j) = subs(derivada, [p;tao], equils);
-		   end
-		end
-
-		def linealizar(self,):
+		# def linealizar(self,):

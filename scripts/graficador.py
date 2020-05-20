@@ -9,12 +9,14 @@ from geometry_msgs.msg import Pose
 
 class graficador():
     def __init__(self,):
-        global axs, flag_1, flag_2, flag_3
+        global axs, flag_1, flag_2, flag_3, x_gazebo, y_gazebo, z_gazebo
         self.fig = plt.figure()
         axs = p3.Axes3D(self.fig)
         flag_1 = False
         flag_2 = False
         flag_3 = False
+
+        x_gazebo, y_gazebo, z_gazebo = 0, 0, 0
         rospy.init_node('graficador', anonymous=True)
         rospy.Subscriber('/gazebo/model_states', ModelStates, self.model_states_callback)
         rospy.Subscriber('/imu1/pos', Pose, self.imu_1)
