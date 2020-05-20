@@ -54,9 +54,9 @@
 
   <arg name="debug" default="0"/>
 
-  <arg name="x" default="10"/>
-  <arg name="y" default="10"/>
-  <arg name="z" default="10"/>
+  <arg name="x" default="1"/>
+  <arg name="y" default="1"/>
+  <arg name="z" default="-1"/>
   <arg name="roll" default="0.0"/>
   <arg name="pitch" default="0.0"/>
   <arg name="yaw" default="0.0"/>

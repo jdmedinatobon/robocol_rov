@@ -20,7 +20,7 @@ class IMU:
         self.bias_y = 0
         self.bias_z = 9.8
 
-        self.s = 0.00001 #Step size
+        self.s = -1e-5 #Step size
 
         #Esta es la matriz Fk del modelo
         self.F = np.eye(6)
@@ -35,7 +35,7 @@ class IMU:
         self.R = np.eye(6)
 
         #Matriz de covarianza del error. Lo que es Pk barra en el paper.
-        self.P =copy.copy(self.Q)#np.zeros((6,6))
+        self.P = copy.copy(self.Q)#np.zeros((6,6))
 
         #Matriz de restriccion utilizada en el problema de optimizacion
         self.C = np.ones((6,6))

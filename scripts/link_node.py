@@ -56,7 +56,8 @@ class LinkNode:
         self.is_sensor_info_new[init.id] = 1
 
         if sum(self.is_sensor_info_new.values()) == self.num_sensors:
-            self.info.price = self.link.reiniciar(self.sensor_grads, self.sensor_hessians, self.sensor_num_links, self.sensor_states)
+            self.link.reiniciar(self.sensor_grads, self.sensor_hessians, self.sensor_num_links, self.sensor_states)
+            self.info.price 
             self.is_sensor_info_new = {s : 0 for s in self.sensores}
             self.link_info_pub.publish(self.info)
 

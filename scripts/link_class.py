@@ -30,7 +30,6 @@ class Link:
 
         self.current_sum = np.sum(pi_zeros)
         self.price = self.price = 1/(1/self.hessian + self.initial_sum)*(self.initial_sum-self.current_sum-self.sum_sensor_info - (self.grad/self.hessian))
-        return self.price
 
     def calcular_gradiente(self):
         self.grad = -self.mu/self.x

@@ -40,7 +40,7 @@ class ImuNode:
 
         self.price_counter = 0
         self.price_max_iter = 5
-        self.consensus_max_iter = 5
+        self.consensus_max_iter = 20
 
         self.link_info = {e : 0 for e in enlaces}
         self.is_link_info_new = {e : 0 for e in enlaces}
@@ -133,8 +133,8 @@ class ImuNode:
                 self.is_link_info_new = {e : 0 for e in self.enlaces}
                 # print("Aqui")
         else:
-            # print("Link: {}, w: {}.".format(info.id, info.price))
-            # print("-------------------------------------")
+            print("Link: {}, w: {}.".format(info.id, info.price))
+            print("-------------------------------------")
             self.info.done = True
             self.imu_info_pub.publish(self.info)
             self.price_counter = 0
@@ -177,6 +177,8 @@ class ImuNode:
             # print("PI:")
             # print(self.imu.PI)
             self.imu.calcular_x_consensus()
+            # print("Delta: {}".format(self.imu.delta_x))
+            # print("PI: {}".format(self.imu.PI))
 
             delta = time.time()-tiempo
             # print("----------")
