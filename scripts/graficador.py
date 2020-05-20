@@ -22,6 +22,7 @@ class graficador():
         rospy.Subscriber('/imu1/pos', Pose, self.imu_1)
         rospy.Subscriber('/imu2/pos', Pose, self.imu_2)
         rospy.Subscriber('/imu3/pos', Pose, self.imu_3)
+
         self.ani = animation.FuncAnimation(self.fig, self.animate)
         plt.show()
 
@@ -51,7 +52,6 @@ class graficador():
         y_imu_3 = msg.position.y
         z_imu_3 = msg.position.z
         flag_3 = True
-
 
     def animate(i,j):
         global axs, x_gazebo, y_gazebo, z_gazebo, x_imu_1, y_imu_1, z_imu_1, x_imu_2, y_imu_2, z_imu_2, x_imu_3, y_imu_3, z_imu_3, flag_1, flag_2, flag_3

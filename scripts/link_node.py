@@ -34,6 +34,7 @@ class LinkNode:
         self.is_sensor_info_new = {s : 0 for s in sensores}
         self.sensor_grads = {s: 0 for s in sensores}
         self.sensor_hessians = {s: 0 for s in sensores}
+        self.sensor_states = {s: 0 for s in sensores}
         self.sensor_num_links = {s: 0 for s in sensores}
 
         self.link_info_pub = rospy.Publisher('/' + self.info.id + '/info', LinkInfo, queue_size = 10)
@@ -50,17 +51,17 @@ class LinkNode:
     def sensor_init_callback(self, init):
         self.sensor_grads[init.id] = init.grad
         self.sensor_hessians[init.id] = init.hessian
+        self.sensor_states[init.id] = init.state
         self.sensor_num_links[init.id] = init.num_links
         self.is_sensor_info_new[init.id] = 1
 
         if sum(self.is_sensor_info_new.values()) == self.num_sensors:
-            self.info.price = self.link.reiniciar(self.sensor_grads, self.sensor_hessians, self.sensor_num_links)
+            self.info.price = self.link.reiniciar(self.sensor_grads, self.sensor_hessians, self.sensor_num_links, self.sensor_states)
             self.is_sensor_info_new = {s : 0 for s in self.sensores}
             self.link_info_pub.publish(self.info)
 
     def sensor_info_callback(self, info):
 
-        #Revisar este if.
         if not info.done:
             if np.sum(self.is_sensor_info_new) < self.num_sensors:
                 self.sensor_info[info.id] = info.PI

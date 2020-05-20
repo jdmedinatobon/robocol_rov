@@ -70,6 +70,9 @@ class IMU:
         self.x_consensus[0] = pose.pose[1].position.x
         self.x_consensus[1] = pose.pose[1].position.y
         self.x_consensus[2] = pose.pose[1].position.z
+        self.x_consensus[3] = pose.twist[1].linear.x
+        self.x_consensus[4] = pose.twist[1].linear.y
+        self.x_consensus[5] = pose.twist[1].linear.z
 
     def actualizar(self, acel, sample_time):
         self.calcular_z(acel, sample_time)
@@ -81,11 +84,9 @@ class IMU:
         self.calcular_P()
 
     def calcular_grad(self):
-        #TODO: Poner aqui como calcular el gradiente
         self.grad = np.dot(inv(self.P), self.x_consensus - self.estimated_state) - np.dot(inv(self.P), (self.x_consensus - self.estimated_state))-np.dot(np.dot(self.H.T, inv(self.R)),(self.state-np.dot(self.H, self.state)))
 
     def calcular_hessian(self):
-        #TODO: Poner aqui como calcular la hessiana
         self.hessian = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)),self.H)
 
     def calcular_z(self, acel, sample_time):

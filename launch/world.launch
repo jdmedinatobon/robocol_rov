@@ -54,9 +54,9 @@
 
   <arg name="debug" default="0"/>
 
-  <arg name="x" default="0"/>
-  <arg name="y" default="0"/>
-  <arg name="z" default="-20"/>
+  <arg name="x" default="10"/>
+  <arg name="y" default="10"/>
+  <arg name="z" default="10"/>
   <arg name="roll" default="0.0"/>
   <arg name="pitch" default="0.0"/>
   <arg name="yaw" default="0.0"/>
@@ -76,8 +76,6 @@
     <arg name="use_ned_frame" value="$(arg use_ned_frame)"/>
     <arg name="namespace" value="$(arg namespace)"/>
   </include>
-
-
 
   <arg name="uuv_name" default="rexrov"/>
   <arg name="model_name" default="rexrov"/>

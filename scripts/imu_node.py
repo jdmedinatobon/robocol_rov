@@ -78,7 +78,7 @@ class ImuNode:
             self.delta_time = self.new_time - self.past_time
             self.imu.actualizar(msg, self.delta_time)#1./self.f)
             self.done = True
-            print(self.delta_time)
+            # print(self.delta_time)
 
         #TODO: Terminar esto. No estoy seguro aun como organizarlos para que todo
         #este bien sincronizado. Creo que voy a usar Threads.
@@ -94,7 +94,6 @@ class ImuNode:
         self.time = time.time()
         self.calcular_consensus()
 
-
         self.past_time = copy.copy(self.new_time)
 
         #No creo que esta flag se necesite
@@ -105,6 +104,7 @@ class ImuNode:
     def model_states_callback(self, msg):
     	if self.first:
             self.imu.iniciar(msg)
+            print("Iniciar: {}".format(self.imu.x_consensus))
             self.first = False
 
         self.x_gazebo = msg.pose[1].position.x
@@ -112,8 +112,9 @@ class ImuNode:
     	self.z_gazebo = msg.pose[1].position.z
 
     def link_info_callback(self, info):
-        # print("Callback de enlace llamado. Info: {}, Tiempo entre llamados :{}".format(info, time.time()-self.time))
-
+        # print("Callback de enlace llamado. Imu: {}. Info: {},".format(self.namespace, info, time.time()-self.time))
+        # print(info.id)
+        # print("Counter: {}".format(self.price_counter))
         if self.price_counter < self.price_max_iter:
             # self.info.grad, self.info.hessian = self.imu.calcular_info(info)
             self.link_info[info.id] = info.price
@@ -132,10 +133,12 @@ class ImuNode:
                 self.is_link_info_new = {e : 0 for e in self.enlaces}
                 # print("Aqui")
         else:
+            # print("Link: {}, w: {}.".format(info.id, info.price))
+            # print("-------------------------------------")
             self.info.done = True
             self.imu_info_pub.publish(self.info)
-            self.flag_price.set()
             self.price_counter = 0
+            self.flag_price.set()
         #self.time = time.time()
 
     def initialize_sensors(self):
@@ -145,11 +148,15 @@ class ImuNode:
 
         self.info.done = False
 
+        self.init.state = self.imu.x_consensus.flatten()
+
         self.init.grad = self.imu.grad.flatten()#self.imu.grad.tolist()
+        # print(self.init.grad.shape)
         self.init.hessian = np.diag(self.imu.hessian)
+        # print(self.init.hessian)
         self.init.num_links = self.num_links
         #self.info.done = False
-        #print(self.init)
+        #print(self.init)}
         self.imu_init_pub.publish(self.init)
         # print(self.init)
 
@@ -166,13 +173,13 @@ class ImuNode:
 
             self.initialize_sensors()
             self.flag_price.clear()
-            self.flag_price.wait()#timeout = 1/50.0)
-
+            self.flag_price.wait(timeout = 1/100.0)
             # print("PI:")
             # print(self.imu.PI)
             self.imu.calcular_x_consensus()
 
             delta = time.time()-tiempo
+            # print("----------")
             # print("j = {}. Tiempo Iteracion: {} milisegundos".format(j, delta*1000))
             j += 1
 
@@ -180,7 +187,7 @@ class ImuNode:
         pose_imu = self.imu.dar_pose()
         self.imu_pos.publish(pose_imu)
         # print("Optimizacion Terminada. Estimacion: {}".format(pose_imu))
-        print("Estimacion: {}".format(self.imu.x_consensus))
+        print("Estimacion: x: {}, y: {}, z: {}".format(self.imu.x_consensus[0], self.imu.x_consensus[1], self.imu.x_consensus[2]))
         print("Matriz de covarianza: {}".format(self.imu.P[0,0]))
 
 if __name__ == '__main__':
