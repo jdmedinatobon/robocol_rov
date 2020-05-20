@@ -17,6 +17,8 @@ from robocol_rov.msg import ImuInit
 from robocol_rov.msg import ImuInfo
 from robocol_rov.msg import LinkInfo
 from imu_class import IMU
+import copy
+
 
 class ImuNode:
     def __init__(self, namespace, enlaces):
@@ -31,6 +33,10 @@ class ImuNode:
         self.info.id = namespace
         self.num_links = len(enlaces)
         self.enlaces = enlaces
+
+        self.past_time = 0
+        self.new_time = 0
+        self.delta_time = 0.00000001
 
         self.price_counter = 0
         self.price_max_iter = 5
@@ -61,17 +67,20 @@ class ImuNode:
         while not rospy.is_shutdown():
             # #self.imu_info_pub.publish(self.info)
 
-            # if self.done:
-            #     pose_imu = self.imu.dar_pose()
-            #     self.imu_pos.publish(pose_imu)
-                #print(pose_imu)
-       		rate.sleep()
+            if self.done:
+                pose_imu = self.imu.dar_pose()
+                self.imu_pos.publish(pose_imu)
+       	rate.sleep()
 
     def imu_callback(self, msg):
-    	if self.first == False:
-            self.imu.actualizar(msg, 1./self.f)
-	        #print(msg.linear_acceleration.x)
+        self.new_time = copy.copy(msg.header.stamp.nsecs*(10**(-9)))
+        if not (self.first):
+            self.delta_time = self.new_time - self.past_time
+            self.imu.actualizar(msg, self.delta_time)#1./self.f)
             self.done = True
+            print(self.delta_time)
+
+
 
         #TODO: Terminar esto. No estoy seguro aun como organizarlos para que todo
         #este bien sincronizado. Creo que voy a usar Threads.
@@ -86,6 +95,9 @@ class ImuNode:
 
         self.time = time.time()
         self.calcular_consensus()
+
+
+        self.past_time = copy.copy(self.new_time)
 
         #No creo que esta flag se necesite
         #self.flag_consensus.wait(timeout = 1/50.0)
