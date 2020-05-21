@@ -27,19 +27,14 @@ class graficador_ws():
 
     def w_1(self, msg):
         global ws_1, flag_w_1
-        #ws_1 = np.concatenate(ws_1,[msg.price[0]])
-        w = np.array(msg.price)
-        # print(msg.price[0])
-        print("1: {}".format(w))
-        #flag_w_1 =True
+        ws_1 = np.concatenate((ws_1,msg.price[4]), axis=None)
+        flag_w_1 =True
+        #print(np.array(msg.price[0]))
 
     def w_2(self, msg):
         global ws_2, flag_w_2
-        #ws_2 = np.concatenate(ws_2,msg.price[0])
-        #flag_w_2 =True
-        w = np.array(msg.price)
-        # print(ws_2)
-        print("2: {}".format(w))
+        ws_2 = np.concatenate((ws_2,msg.price[4]), axis=None)
+        flag_w_2 =True
 
     def animate(i,j):
         global flag_w_1, flag_w_2, ws_1, ws_2

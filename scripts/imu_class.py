@@ -20,7 +20,7 @@ class IMU:
         self.bias_y = 0
         self.bias_z = 9.8
 
-        self.s = 1e-5 #Step size
+        self.s = 1e-4 #Step size
 
         #Esta es la matriz Fk del modelo
         self.F = np.eye(6)
@@ -29,10 +29,10 @@ class IMU:
         self.H = np.eye(6)
 
         #Matriz de covarianza del ruido del sistema
-        self.Q = np.eye(6)
+        self.Q = np.eye(6)*0.01
 
         #Matriz de covarianza del ruido de la medida
-        self.R = np.eye(6)
+        self.R = np.eye(6)*0.01
 
         #Matriz de covarianza del error. Lo que es Pk barra en el paper.
         self.P = copy.copy(self.Q)#np.zeros((6,6))

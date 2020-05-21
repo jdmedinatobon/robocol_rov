@@ -40,7 +40,7 @@ class ImuNode:
 
         self.price_counter = 0
         self.price_max_iter = 5
-        self.consensus_max_iter = 20
+        self.consensus_max_iter = 30
 
         self.link_info = {e : 0 for e in enlaces}
         self.is_link_info_new = {e : 0 for e in enlaces}
@@ -176,7 +176,7 @@ class ImuNode:
             self.imu.calcular_x_consensus()
 
             # print("x consensus: {}".format(self.imu.x_consensus))
-            consensus[j] = self.imu.x_consensus[1]
+            consensus[j] = self.imu.x_consensus[0]
 
             delta = time.time()-tiempo
             # print("----------")
