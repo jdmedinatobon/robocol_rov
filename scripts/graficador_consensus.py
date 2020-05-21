@@ -10,7 +10,7 @@ import numpy as np
 
 class graficador_consensus():
     def __init__(self,):
-        global axs, flag_cons_1, flag_cons_2, flag_cons_3, hist_1,hist_2,hist_3,hist_real
+        global axs, flag_cons_1, flag_cons_2, flag_cons_3,flag_cons_4, hist_1,hist_2,hist_3,hist_real,hist_4
         self.fig = plt.figure()
         axs = self.fig.add_subplot(111)
         flag_cons_1 = False
@@ -37,21 +37,21 @@ class graficador_consensus():
 
     def con_1(self, msg):
         global cons_1_value, flag_cons_1
-        cons_1_value = msg.consensus
+        cons_1_value = np.array(msg.consensus)
         flag_cons_1 =True
 
     def con_2(self, msg):
         global cons_2_value, flag_cons_2
-        cons_2_value = msg.consensus
+        cons_2_value = np.array(msg.consensus)
         flag_cons_2 = True
 
     def con_3(self, msg):
         global cons_3_value, flag_cons_3, hist_real
-        cons_3_value = msg.consensus
+        cons_3_value = np.array(msg.consensus)
         flag_cons_3 = True
     def con_4(self, msg):
         global cons_4_value, flag_cons_4
-        cons_4_value = msg.consensus
+        cons_4_value = np.array(msg.consensus)
         flag_cons_4 = True
 
     def model_states_callback(self, msg):
@@ -75,11 +75,13 @@ class graficador_consensus():
             axs.plot(hist_1, c = 'r')
             axs.plot(hist_2, c = 'g')
             axs.plot(hist_3, c = 'y')
+            axs.plot(hist_4)
             plt.title("Valor de los consensus para cada IMU en la posicion x")
-            axs.legend(("Posicion real","Consensus IM1 1","Consensus IM1 2", "Consensus IM1 3"))
+            axs.legend(("Posicion real","Consensus IM1 1","Consensus IM1 2", "Consensus IM1 3", "Consensus IM1 4"))
             flag_cons_1 = False
             flag_cons_2 = False
             flag_cons_3 = False
+            flag_cons_4 = False
             plt.grid()
 
 if __name__ == '__main__':
