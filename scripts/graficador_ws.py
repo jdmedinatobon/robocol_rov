@@ -60,10 +60,10 @@ class graficador_ws():
             #axs.clear()
             axs.plot(ws_1, c = 'r')
             axs.plot(ws_2, c = 'g')
-            axs.plot(ws_3, c = 'r')
-            axs.plot(ws_4, c = 'g')
+            axs.plot(ws_3, c = 'b')
+            axs.plot(ws_4, c = 'y')
             plt.title("Valor de los ws para cada link en la posicion 0")
-            axs.legend(("w link 1","w link 2"))
+            axs.legend(("w link 1","w link 2","w link 3","w link 4" ))
             plt.grid()
 
 
