@@ -123,5 +123,8 @@ class IMU:
         self.estimated_state = np.dot(self.F, self.x_consensus)# + w_k
 
     def calcular_x_consensus(self):
-        self.delta_x = -np.dot(inv(self.hessian), self.grad) + self.PI
-        self.x_consensus += self.s*self.delta_x
+        try:
+            self.delta_x = -np.dot(inv(self.hessian), self.grad) + self.PI
+            self.x_consensus += self.s*self.delta_x
+        except:
+            print("error extranio")
