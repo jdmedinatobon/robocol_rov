@@ -8,7 +8,7 @@ from geometry_msgs.msg import Pose
 from robocol_rov.msg import LinkInfo, ConsensusInfo
 import numpy as np
 
-class graficador():
+class graficador_consensus():
     def __init__(self,):
         global axs, flag_cons_1, flag_cons_2, flag_cons_3, hist_1,hist_2,hist_3
         self.fig = plt.figure()
@@ -25,7 +25,6 @@ class graficador():
         rospy.Subscriber('/imu1/cons_info', ConsensusInfo, self.con_1)
         rospy.Subscriber('/imu2/cons_info', ConsensusInfo, self.con_2)
         rospy.Subscriber('/imu3/cons_info', ConsensusInfo, self.con_3)
-
 
         self.ani = animation.FuncAnimation(self.fig, self.animate)
         plt.show()
@@ -45,8 +44,6 @@ class graficador():
         cons_3_value = msg.consensus
         flag_cons_3 = True
 
-
-
     def animate(i,j):
         global cons_1_value,cons_2_value,cons_3_value,flag_cons_1, flag_cons_2, flag_cons_3,hist_1,hist_2,hist_3
 
@@ -63,12 +60,11 @@ class graficador():
             axs.legend(("Consensus IM1 1","Consensus IM1 2", "Consensus IM1 3"))
             flag_cons_1 = False
             flag_cons_2 = False
-            flag_cons_3 = False        
+            flag_cons_3 = False
             plt.grid()
-
 
 if __name__ == '__main__':
     try:
-        graficador()
+        graficador_consensus()
     except rospy.ROSInterruptException:
         pass

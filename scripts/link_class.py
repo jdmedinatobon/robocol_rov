@@ -19,7 +19,7 @@ class Link:
         np_grads = np.array(grads.values())
         np_hessians = np.array(hessians.values())
         np_num_links = np.reshape(np.array(num_links.values()), (-1, 1))
-        np_states = np.array(states.values())
+        np_states = np.reshape(np.array(states.values()), (-1, 6))
         self.x = -np.sum(np_states, axis = 0)
         self.sum_sensor_info = np.sum(np_grads/np_hessians)
         pi_zeros = np_num_links/np_hessians

@@ -117,9 +117,10 @@ class ImuNode:
         # print("Callback de enlace llamado. Imu: {}. Info: {},".format(self.namespace, info, time.time()-self.time))
         # print(info.id)
         # print("Counter: {}".format(self.price_counter))
+
         if self.price_counter < self.price_max_iter:
             # self.info.grad, self.info.hessian = self.imu.calcular_info(info)
-            self.link_info[info.id] = info.price
+            self.link_info[info.id] = np.array(info.price)
             self.is_link_info_new[info.id] = 1
             # print("Sensor: {}. Suma: {}".format(self.namespace,sum(self.is_link_info_new.values())))
 
@@ -135,8 +136,8 @@ class ImuNode:
                 self.is_link_info_new = {e : 0 for e in self.enlaces}
                 # print("Aqui")
         else:
-            print("Link: {}, w: {}.".format(info.id, info.price))
-            print("-------------------------------------")
+            # print("Link: {}, w: {}.".format(info.id, info.price))
+            # print("-------------------------------------")
             self.info.done = True
             self.imu_info_pub.publish(self.info)
             self.price_counter = 0
@@ -172,8 +173,10 @@ class ImuNode:
             self.initialize_sensors()
             self.flag_price.clear()
             self.flag_price.wait(timeout = 1/100.0)
-            consensus[j] = self.imu.calcular_x_consensus()[1]
+            self.imu.calcular_x_consensus()
 
+            # print("x consensus: {}".format(self.imu.x_consensus))
+            consensus[j] = self.imu.x_consensus[1]
 
             delta = time.time()-tiempo
             # print("----------")
@@ -185,8 +188,8 @@ class ImuNode:
         pose_imu = self.imu.dar_pose()
         self.imu_pos.publish(pose_imu)
         # print("Optimizacion Terminada. Estimacion: {}".format(pose_imu))
-        print("Estimacion: x: {}, y: {}, z: {}".format(self.imu.x_consensus[0], self.imu.x_consensus[1], self.imu.x_consensus[2]))
-        print("Matriz de covarianza: {}".format(self.imu.P[0,0]))
+        # print("Estimacion: x: {}, y: {}, z: {}".format(self.imu.x_consensus[0], self.imu.x_consensus[1], self.imu.x_consensus[2]))
+        # print("Matriz de covarianza: {}".format(self.imu.P[0,0]))
 
 if __name__ == '__main__':
     try:

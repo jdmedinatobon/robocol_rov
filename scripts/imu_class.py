@@ -124,5 +124,4 @@ class IMU:
 
     def calcular_x_consensus(self):
         self.delta_x = -np.dot(inv(self.hessian), self.grad) + self.PI
-        self.x_consensus = self.x_consensus + self.s*self.delta_x
-        return self.x_consensus
+        self.x_consensus += self.s*self.delta_x
