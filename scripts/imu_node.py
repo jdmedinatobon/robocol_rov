@@ -13,10 +13,9 @@ from geometry_msgs.msg import Pose, Quaternion, Point, PoseStamped, PoseWithCova
 from sensor_msgs.msg import Imu
 from gazebo_msgs.msg import ModelStates
 
-from robocol_rov.msg import ImuInit
-from robocol_rov.msg import ImuInfo
-from robocol_rov.msg import LinkInfo
+from robocol_rov.msg import ImuInit, ImuInfo, LinkInfo, ConsensusInfo
 from imu_class import IMU
+
 import copy
 
 
@@ -30,6 +29,7 @@ class ImuNode:
         self.init = ImuInit()
         self.init.id = namespace
         self.info = ImuInfo()
+        self.cons_info = ConsensusInfo()
         self.info.id = namespace
         self.num_links = len(enlaces)
         self.enlaces = enlaces
@@ -56,6 +56,8 @@ class ImuNode:
         self.imu_pos = rospy.Publisher('/' + namespace + '/pos', Pose, queue_size=10)
         self.imu_init_pub = rospy.Publisher('/' + namespace + '/init', ImuInit, queue_size = 10)
         self.imu_info_pub = rospy.Publisher('/' + namespace + '/info', ImuInfo, queue_size = 10)
+        self.imu_con_pub = rospy.Publisher('/' + namespace + '/cons_info', ConsensusInfo, queue_size = 10)
+
 
         rate = rospy.Rate(self.f)
 
@@ -151,20 +153,16 @@ class ImuNode:
         self.init.state = self.imu.x_consensus.flatten()
 
         self.init.grad = self.imu.grad.flatten()#self.imu.grad.tolist()
-        # print(self.init.grad.shape)
         self.init.hessian = np.diag(self.imu.hessian)
-        # print(self.init.hessian)
         self.init.num_links = self.num_links
-        #self.info.done = False
-        #print(self.init)}
         self.imu_init_pub.publish(self.init)
-        # print(self.init)
 
     def calcular_consensus(self):
         #Aqui se inicia a resolver el problema de optimizacion
         #Recordar que j se refiere a las iteraciones del problema de optimizacion
 
         j = 0
+        consensus = np.zeros(self.consensus_max_iter)
         while j < self.consensus_max_iter:
             tiempo = time.time()
             #Paso 1: Esperar a que w (price) este calculado.
@@ -174,17 +172,15 @@ class ImuNode:
             self.initialize_sensors()
             self.flag_price.clear()
             self.flag_price.wait(timeout = 1/100.0)
-            # print("PI:")
-            # print(self.imu.PI)
-            self.imu.calcular_x_consensus()
-            # print("Delta: {}".format(self.imu.delta_x))
-            # print("PI: {}".format(self.imu.PI))
+            consensus[j] = self.imu.calcular_x_consensus()[1]
+
 
             delta = time.time()-tiempo
             # print("----------")
             # print("j = {}. Tiempo Iteracion: {} milisegundos".format(j, delta*1000))
             j += 1
-
+        self.cons_info.consensus = consensus
+        self.imu_con_pub.publish(self.cons_info.consensus)
 
         pose_imu = self.imu.dar_pose()
         self.imu_pos.publish(pose_imu)

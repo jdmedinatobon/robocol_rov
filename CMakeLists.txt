@@ -53,6 +53,7 @@ add_message_files(
    ImuInit.msg
    ImuInfo.msg
    LinkInfo.msg
+   ConsensusInfo.msg
 )
 
 ## Generate services in the 'srv' folder
