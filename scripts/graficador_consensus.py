@@ -59,13 +59,13 @@ class graficador_consensus():
         x_gazebo = msg.pose[1].position.x
         y_gazebo = msg.pose[1].position.y
         z_gazebo = msg.pose[1].position.z
-        
+
 
     def animate(i,j):
         global cons_1_value,cons_2_value,cons_3_value,cons_4_value,flag_cons_1,flag_cons_4, flag_cons_2, flag_cons_3,hist_1,hist_2,hist_3,hist_real,hist_4
 
         if  flag_cons_1 and flag_cons_2 and flag_cons_3 and flag_cons_4:
-            hist_real = np.concatenate((hist_real, x_gazebo), axis=None) 
+            hist_real = np.concatenate((hist_real, x_gazebo), axis=None)
             hist_1 = np.concatenate((hist_1, cons_1_value[-1]), axis=None)
             hist_2 = np.concatenate((hist_2, cons_2_value[-1]), axis=None)
             hist_3 = np.concatenate((hist_3, cons_3_value[-1]), axis=None)
@@ -77,7 +77,7 @@ class graficador_consensus():
             axs.plot(hist_3, c = 'y')
             axs.plot(hist_4)
             plt.title("Valor de los consensus para cada IMU en la posicion x")
-            axs.legend(("Posicion real","Consensus IM1 1","Consensus IM1 2", "Consensus IM1 3", "Consensus IM1 4"))
+            axs.legend(("Posicion real","Consensus IMU 1","Consensus IMU 2", "Consensus IMU 3", "Consensus IMU 4"))
             flag_cons_1 = False
             flag_cons_2 = False
             flag_cons_3 = False

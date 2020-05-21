@@ -81,7 +81,7 @@ class ImuNode:
             self.imu.actualizar(msg, self.delta_time)#1./self.f)
             self.done = True
             # print(self.delta_time)
-
+        # print(self.imu.P[0,0])
         #TODO: Terminar esto. No estoy seguro aun como organizarlos para que todo
         #este bien sincronizado. Creo que voy a usar Threads.
         #Aqui se debe indicar que se comience a solucionar el problema de manera distribuida.
