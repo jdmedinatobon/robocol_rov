@@ -66,10 +66,10 @@ class graficador_consensus():
 
         if  flag_cons_1 and flag_cons_2 and flag_cons_3 and flag_cons_4:
             hist_real = np.concatenate((hist_real, x_gazebo), axis=None) 
-            hist_1 = np.concatenate((hist_1, cons_1_value[-1]), axis=None)
-            hist_2 = np.concatenate((hist_2, cons_2_value[-1]), axis=None)
-            hist_3 = np.concatenate((hist_3, cons_3_value[-1]), axis=None)
-            hist_4 = np.concatenate((hist_4, cons_4_value[-1]), axis=None)
+            hist_1 = np.concatenate((hist_1, cons_1_value), axis=None)
+            hist_2 = np.concatenate((hist_2, cons_2_value), axis=None)
+            hist_3 = np.concatenate((hist_3, cons_3_value), axis=None)
+            hist_4 = np.concatenate((hist_4, cons_4_value), axis=None)
 
             axs.plot(hist_real, c = 'b' )
             axs.plot(hist_1, c = 'r')
