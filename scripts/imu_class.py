@@ -15,7 +15,7 @@ class IMU:
         self.state = np.ones((6,1)) # esto en el paper es equivalente a z, la estimacion del sensor
         self.estimated_state = np.zeros((6,1)) # esto en el paper es equivalente a x barra, la estimacion realizada a partir de nuestro modelo
         self.x_consensus = np.zeros((6,1)) # esto es lo que esperamos llegue a ser magico y converger a un valor global para todos los sensores... mistico? tal vez. Hotel? Trivago
-        self.mistico = np.zeros((6,1)) 
+        self.mistico = np.zeros((6,1))
         self.bias_x = 0
         self.bias_y = 0
         self.bias_z = 9.8
@@ -90,7 +90,7 @@ class IMU:
         self.calcular_P()
 
     def calcular_grad(self):
-        self.grad = np.dot(inv(self.P), self.x_consensus - self.estimated_state) - np.dot(inv(self.P), (self.x_consensus - self.estimated_state))-np.dot(np.dot(self.H.T, inv(self.R)),(self.state-np.dot(self.H, self.state)))
+        self.grad = np.dot(inv(self.P), self.x_consensus - self.estimated_state)-np.dot(np.dot(self.H.T, inv(self.R)),(self.state-np.dot(self.H, self.state)))
 
     def calcular_hessian(self):
         self.hessian = inv(self.P) + np.dot(np.dot(self.H.T, inv(self.R)),self.H)
@@ -132,7 +132,7 @@ class IMU:
         try:
             self.delta_x = -np.dot(inv(self.hessian), self.grad) + self.PI
             self.mistico = copy.copy(self.x_consensus)
-            self.x_consensus += self.s*self.delta_x 
+            self.x_consensus += self.s*self.delta_x
         except:
             self.x_consensus = self.mistico
             print("error extranio")
