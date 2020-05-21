@@ -20,7 +20,7 @@ class IMU:
         self.bias_y = 0
         self.bias_z = 9.8
 
-        self.s = 1e-4 #Step size
+        self.s = 1e-5 #Step size
 
         #Esta es la matriz Fk del modelo
         self.F = np.eye(6)

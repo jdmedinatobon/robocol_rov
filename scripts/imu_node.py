@@ -40,7 +40,7 @@ class ImuNode:
 
         self.price_counter = 0
         self.price_max_iter = 5
-        self.consensus_max_iter = 30
+        self.consensus_max_iter = 50
 
         self.link_info = {e : 0 for e in enlaces}
         self.is_link_info_new = {e : 0 for e in enlaces}

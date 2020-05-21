@@ -1,0 +1,30 @@
+<launch>
+
+  <node name="imu1" pkg="robocol_rov" type="imu_node.py" output = "screen" args="imu1 link1 link4">
+  </node>
+
+  <node name="imu2" pkg="robocol_rov" type="imu_node.py" output = "screen" args="imu2 link1 link2">
+  </node>
+
+  <node name="imu3" pkg="robocol_rov" type="imu_node.py" output = "screen" args="imu3 link3 link4">
+  </node>
+
+  <node name="imu4" pkg="robocol_rov" type="imu_node.py" output = "screen" args="imu4 link2 link3">
+  </node>
+
+  <node name="link1" pkg="robocol_rov" type="link_node.py" output = "screen" args="link1 imu1 imu2">
+  </node>
+
+  <node name="link2" pkg="robocol_rov" type="link_node.py" output = "screen" args="link2 imu2 imu4">
+  </node>
+
+  <node name="link3" pkg="robocol_rov" type="link_node.py" output = "screen" args="link3 imu3 imu4">
+  </node>
+
+  <node name="link4" pkg="robocol_rov" type="link_node.py" output = "screen" args="link4 imu1 imu3">
+  </node>
+
+  <node name="graficador" pkg="robocol_rov" type="graficador.py">
+  </node>
+
+</launch>
