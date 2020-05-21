@@ -39,8 +39,8 @@ class ImuNode:
         self.delta_time = 0.00000001
 
         self.price_counter = 0
-        self.price_max_iter = 5
-        self.consensus_max_iter = 80
+        self.price_max_iter = 10
+        self.consensus_max_iter = 30
 
         self.link_info = {e : 0 for e in enlaces}
         self.is_link_info_new = {e : 0 for e in enlaces}
