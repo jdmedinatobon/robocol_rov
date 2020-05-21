@@ -50,7 +50,7 @@ class graficador_consensus():
         cons_3_value = msg.consensus
         flag_cons_3 = True
     def con_4(self, msg):
-        global cons_4_value, flag_cons_4, hist_real
+        global cons_4_value, flag_cons_4
         cons_4_value = msg.consensus
         flag_cons_4 = True
 
@@ -62,7 +62,7 @@ class graficador_consensus():
         
 
     def animate(i,j):
-        global cons_1_value,cons_2_value,cons_3_value,cons_4_value,flag_cons_1,flag_cons_4, flag_cons_2, flag_cons_3,hist_1,hist_2,hist_3,hist_real
+        global cons_1_value,cons_2_value,cons_3_value,cons_4_value,flag_cons_1,flag_cons_4, flag_cons_2, flag_cons_3,hist_1,hist_2,hist_3,hist_real,hist_4
 
         if  flag_cons_1 and flag_cons_2 and flag_cons_3 and flag_cons_4:
             hist_real = np.concatenate((hist_real, z_gazebo), axis=None) 
