@@ -76,7 +76,7 @@
     <arg name="use_ned_frame" value="$(arg use_ned_frame)"/>
     <arg name="namespace" value="$(arg namespace)"/>
   </include>
-
+<!--
   <arg name="uuv_name" default="rexrov"/>
   <arg name="model_name" default="rexrov"/>
   <arg name="joy_id" default="0"/>
@@ -86,5 +86,5 @@
     <arg name="model_name" value="$(arg model_name)"/>
     <arg name="joy_id" value="$(arg joy_id)"/>
   </include>
-    
+-->
 </launch>

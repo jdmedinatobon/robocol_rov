@@ -131,8 +131,8 @@ class IMU:
     def calcular_x_consensus(self):
         try:
             self.delta_x = -np.dot(inv(self.hessian), self.grad) + self.PI
-            self.x_consensus += self.s*self.delta_x
             self.mistico = copy.copy(self.x_consensus)
+            self.x_consensus += self.s*self.delta_x 
         except:
             self.x_consensus = self.mistico
             print("error extranio")

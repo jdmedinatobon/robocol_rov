@@ -24,7 +24,8 @@
   <node name="link4" pkg="robocol_rov" type="link_node.py" output = "screen" args="link4 imu1 imu3">
   </node>
 
+<!--
   <node name="graficador" pkg="robocol_rov" type="graficador.py">
   </node>
-
+-->
 </launch>
