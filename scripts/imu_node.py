@@ -106,7 +106,7 @@ class ImuNode:
     def model_states_callback(self, msg):
     	if self.first:
             self.imu.iniciar(msg)
-            print("Iniciar: {}".format(self.imu.x_consensus))
+            # print("Iniciar: {}".format(self.imu.x_consensus))
             self.first = False
 
         self.x_gazebo = msg.pose[1].position.x
