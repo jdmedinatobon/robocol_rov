@@ -15,7 +15,7 @@ class IMU:
         self.state = np.ones((6,1)) # esto en el paper es equivalente a z, la estimacion del sensor
         self.estimated_state = np.zeros((6,1)) # esto en el paper es equivalente a x barra, la estimacion realizada a partir de nuestro modelo
         self.x_consensus = np.zeros((6,1)) # esto es lo que esperamos llegue a ser magico y converger a un valor global para todos los sensores... mistico? tal vez. Hotel? Trivago
-
+        self.mistico = np.zeros((6,1)) 
         self.bias_x = 0
         self.bias_y = 0
         self.bias_z = 9.8
@@ -73,6 +73,12 @@ class IMU:
         self.x_consensus[3] = pose.twist[1].linear.x
         self.x_consensus[4] = pose.twist[1].linear.y
         self.x_consensus[5] = pose.twist[1].linear.z
+        self.mistico[0] = pose.pose[1].position.x
+        self.mistico[1] = pose.pose[1].position.y
+        self.mistico[2] = pose.pose[1].position.z
+        self.mistico[3] = pose.twist[1].linear.x
+        self.mistico[4] = pose.twist[1].linear.y
+        self.mistico[5] = pose.twist[1].linear.z
 
     def actualizar(self, acel, sample_time):
         self.calcular_z(acel, sample_time)
@@ -126,5 +132,7 @@ class IMU:
         try:
             self.delta_x = -np.dot(inv(self.hessian), self.grad) + self.PI
             self.x_consensus += self.s*self.delta_x
+            self.mistico = copy.copy(self.x_consensus)
         except:
+            self.x_consensus = self.mistico
             print("error extranio")
